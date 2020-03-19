@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="7fa3fd12-ed9f-40b2-b3cf-989dc4daad1a" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Enum" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectId" id="1Z8UNXuxzZ5gLY59puhyNs0pvUI" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="RunManager">
+    <configuration name="Main" type="Application" factoryName="Application" temporary="true">
+      <option name="MAIN_CLASS_NAME" value="com.company.Main" />
+      <module name="TP1-SIA" />
+      <option name="PROGRAM_PARAMETERS" value="soko1.txt" />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.Main" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="7fa3fd12-ed9f-40b2-b3cf-989dc4daad1a" name="Default Changelist" comment="" />
+      <created>1584220174897</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1584220174897</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="418" y="210" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1584567652806">
+      <screen x="0" y="25" width="1920" height="1055" />
+    </state>
+    <state x="418" y="210" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.25.1920.1055@0.25.1920.1055" timestamp="1584567652806" />
+    <state x="676" y="357" width="571" height="414" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1584567625374">
+      <screen x="0" y="25" width="1920" height="1055" />
+    </state>
+    <state x="676" y="357" width="571" height="414" key="#com.intellij.fileTypes.FileTypeChooser/0.25.1920.1055@0.25.1920.1055" timestamp="1584567625374" />
+    <state x="768" y="271" width="374" height="574" key="#com.intellij.ide.util.MemberChooser" timestamp="1584580091755">
+      <screen x="0" y="25" width="1920" height="1055" />
+    </state>
+    <state x="768" y="271" width="374" height="574" key="#com.intellij.ide.util.MemberChooser/0.25.1920.1055@0.25.1920.1055" timestamp="1584580091755" />
+    <state width="1874" height="274" key="GridCell.Tab.0.bottom" timestamp="1584569015170">
+      <screen x="0" y="25" width="1920" height="1055" />
+    </state>
+    <state width="1874" height="274" key="GridCell.Tab.0.bottom/0.25.1920.1055@0.25.1920.1055" timestamp="1584569015170" />
+    <state width="1874" height="274" key="GridCell.Tab.0.center" timestamp="1584569015168">
+      <screen x="0" y="25" width="1920" height="1055" />
+    </state>
+    <state width="1874" height="274" key="GridCell.Tab.0.center/0.25.1920.1055@0.25.1920.1055" timestamp="1584569015168" />
+    <state width="1874" height="274" key="GridCell.Tab.0.left" timestamp="1584569015167">
+      <screen x="0" y="25" width="1920" height="1055" />
+    </state>
+    <state width="1874" height="274" key="GridCell.Tab.0.left/0.25.1920.1055@0.25.1920.1055" timestamp="1584569015167" />
+    <state width="1874" height="274" key="GridCell.Tab.0.right" timestamp="1584569015169">
+      <screen x="0" y="25" width="1920" height="1055" />
+    </state>
+    <state width="1874" height="274" key="GridCell.Tab.0.right/0.25.1920.1055@0.25.1920.1055" timestamp="1584569015169" />
+    <state x="739" y="242" width="432" height="632" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1584472324645">
+      <screen x="0" y="25" width="1920" height="1055" />
+    </state>
+    <state x="739" y="242" width="432" height="632" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser/0.25.1920.1055@0.25.1920.1055" timestamp="1584472324645" />
+    <state x="705" y="171" width="500" height="774" key="refactoring.ChangeSignatureDialog" timestamp="1584484320562">
+      <screen x="0" y="25" width="1920" height="1055" />
+    </state>
+    <state x="705" y="171" width="500" height="774" key="refactoring.ChangeSignatureDialog/0.25.1920.1055@0.25.1920.1055" timestamp="1584484320562" />
+    <state x="624" y="250" width="672" height="677" key="run.anything.popup" timestamp="1584568735461">
+      <screen x="0" y="25" width="1920" height="1055" />
+    </state>
+    <state x="624" y="250" width="672" height="677" key="run.anything.popup/0.25.1920.1055@0.25.1920.1055" timestamp="1584568735461" />
+    <state x="623" y="257" width="672" height="678" key="search.everywhere.popup" timestamp="1584555183260">
+      <screen x="0" y="25" width="1920" height="1055" />
+    </state>
+    <state x="623" y="257" width="672" height="678" key="search.everywhere.popup/0.25.1920.1055@0.25.1920.1055" timestamp="1584555183260" />
+  </component>
+</project>
