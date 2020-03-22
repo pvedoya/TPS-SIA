@@ -4,12 +4,120 @@ public class Board {
     private int width;
     private int height;
     private Square[][] board;
+    private Square ball;
 
     public Board() {
         this.width = 0;
         this.height = 0;
     }
 
+    public boolean makeMove(String direction){
+        if(direction.equals("UP")){
+            if(ball.getI() > 0 && !this.board[ball.getI()-1][ball.getJ()].getType().equals(SquareType.WALL) && !this.board[ball.getI()-1][ball.getJ()].getType().equals(SquareType.VOID)){
+                if(this.board[ball.getI()-1][ball.getJ()].isGoal() || this.board[ball.getI()-1][ball.getJ()].getType().equals(SquareType.TILE)){
+                    this.board[ball.getI()-1][ball.getJ()].setType(SquareType.BALL);
+                    if(this.board[ball.getI()][ball.getJ()].isGoal()){
+                        this.board[ball.getI()][ball.getJ()].setType(SquareType.GOAL);
+                    }else {
+                        this.board[ball.getI()][ball.getJ()].setType(SquareType.TILE);
+                    }
+                }else if(this.board[ball.getI()-1][ball.getJ()].getType().equals(SquareType.BOX)){
+                    if(this.board[ball.getI()-2][ball.getJ()].getType().equals(SquareType.BOX) || this.board[ball.getI()-2][ball.getJ()].getType().equals(SquareType.WALL)){
+                        return false;
+                    }else if(this.board[ball.getI()-2][ball.getJ()].getType().equals(SquareType.TILE) || this.board[ball.getI()-2][ball.getJ()].getType().equals(SquareType.GOAL)){
+                        this.board[ball.getI()-1][ball.getJ()].setType(SquareType.BALL);
+                        this.board[ball.getI()-2][ball.getJ()].setType(SquareType.BOX);
+                        if(this.board[ball.getI()][ball.getJ()].isGoal()){
+                            this.board[ball.getI()][ball.getJ()].setType(SquareType.GOAL);
+                        }else{
+                            this.board[ball.getI()][ball.getJ()].setType(SquareType.TILE);
+                        }
+                    }
+                }
+            }
+            this.ball = this.board[ball.getI()-1][ball.getJ()];
+            return true;
+        }else if(direction.equals("DOWN")){
+            if(ball.getI() < this.height-1 && !this.board[ball.getI()+1][ball.getJ()].getType().equals(SquareType.WALL) && !this.board[ball.getI()+1][ball.getJ()].getType().equals(SquareType.VOID)){
+                if(this.board[ball.getI()+1][ball.getJ()].isGoal() || this.board[ball.getI()+1][ball.getJ()].getType().equals(SquareType.TILE)){
+                    this.board[ball.getI()+1][ball.getJ()].setType(SquareType.BALL);
+                    if(this.board[ball.getI()][ball.getJ()].isGoal()){
+                        this.board[ball.getI()][ball.getJ()].setType(SquareType.GOAL);
+                    }else {
+                        this.board[ball.getI()][ball.getJ()].setType(SquareType.TILE);
+                    }
+                }else if(this.board[ball.getI()+1][ball.getJ()].getType().equals(SquareType.BOX)){
+                    if(this.board[ball.getI()+2][ball.getJ()].getType().equals(SquareType.BOX) || this.board[ball.getI()+2][ball.getJ()].getType().equals(SquareType.WALL)){
+                        return false;
+                    }else if(this.board[ball.getI()+2][ball.getJ()].getType().equals(SquareType.TILE) || this.board[ball.getI()+2][ball.getJ()].getType().equals(SquareType.GOAL)){
+                        this.board[ball.getI()+1][ball.getJ()].setType(SquareType.BALL);
+                        this.board[ball.getI()+2][ball.getJ()].setType(SquareType.BOX);
+                        if(this.board[ball.getI()][ball.getJ()].isGoal()){
+                            this.board[ball.getI()][ball.getJ()].setType(SquareType.GOAL);
+                        }else{
+                            this.board[ball.getI()][ball.getJ()].setType(SquareType.TILE);
+                        }
+                    }
+                }
+            }
+            this.ball = this.board[ball.getI()+1][ball.getJ()];
+            return true;
+        }else if(direction.equals("LEFT")){
+            if(ball.getJ() > 0 && !this.board[ball.getI()][ball.getJ()-1].getType().equals(SquareType.WALL) && !this.board[ball.getI()][ball.getJ()-1].getType().equals(SquareType.VOID)){
+                if(this.board[ball.getI()][ball.getJ()-1].isGoal() || this.board[ball.getI()][ball.getJ()-1].getType().equals(SquareType.TILE)){
+                    this.board[ball.getI()][ball.getJ()-1].setType(SquareType.BALL);
+                    if(this.board[ball.getI()][ball.getJ()].isGoal()){
+                        this.board[ball.getI()][ball.getJ()].setType(SquareType.GOAL);
+                    }else {
+                        this.board[ball.getI()][ball.getJ()].setType(SquareType.TILE);
+                    }
+                }else if(this.board[ball.getI()][ball.getJ()-1].getType().equals(SquareType.BOX)){
+                    if(this.board[ball.getI()][ball.getJ()-2].getType().equals(SquareType.BOX) || this.board[ball.getI()][ball.getJ()-2].getType().equals(SquareType.WALL)){
+                        return false;
+                    }else if(this.board[ball.getI()][ball.getJ()-2].getType().equals(SquareType.TILE) || this.board[ball.getI()][ball.getJ()-2].getType().equals(SquareType.GOAL)){
+                        this.board[ball.getI()][ball.getJ()-1].setType(SquareType.BALL);
+                        this.board[ball.getI()][ball.getJ()-2].setType(SquareType.BOX);
+                        if(this.board[ball.getI()][ball.getJ()].isGoal()){
+                            this.board[ball.getI()][ball.getJ()].setType(SquareType.GOAL);
+                        }else{
+                            this.board[ball.getI()][ball.getJ()].setType(SquareType.TILE);
+                        }
+                    }
+                }
+            }
+            this.ball = this.board[ball.getI()][ball.getJ()-1];
+            return true;
+        }else if(direction.equals("RIGHT")){
+            if(ball.getJ() < this.width-1 && !this.board[ball.getI()][ball.getJ()+1].getType().equals(SquareType.WALL) && !this.board[ball.getI()][ball.getJ()+1].getType().equals(SquareType.VOID)){
+                if(this.board[ball.getI()][ball.getJ()+1].isGoal() || this.board[ball.getI()][ball.getJ()+1].getType().equals(SquareType.TILE)){
+                    this.board[ball.getI()][ball.getJ()+1].setType(SquareType.BALL);
+                    if(this.board[ball.getI()][ball.getJ()].isGoal()){
+                        this.board[ball.getI()][ball.getJ()].setType(SquareType.GOAL);
+                    }else {
+                        this.board[ball.getI()][ball.getJ()].setType(SquareType.TILE);
+                    }
+                }else if(this.board[ball.getI()][ball.getJ()+1].getType().equals(SquareType.BOX)){
+                    if(this.board[ball.getI()][ball.getJ()+2].getType().equals(SquareType.BOX) || this.board[ball.getI()][ball.getJ()+2].getType().equals(SquareType.WALL)){
+                        return false;
+                    }else if(this.board[ball.getI()][ball.getJ()+2].getType().equals(SquareType.TILE) || this.board[ball.getI()][ball.getJ()+2].getType().equals(SquareType.GOAL)){
+                        this.board[ball.getI()][ball.getJ()+1].setType(SquareType.BALL);
+                        this.board[ball.getI()][ball.getJ()+2].setType(SquareType.BOX);
+                        if(this.board[ball.getI()][ball.getJ()].isGoal()){
+                            this.board[ball.getI()][ball.getJ()].setType(SquareType.GOAL);
+                        }else{
+                            this.board[ball.getI()][ball.getJ()].setType(SquareType.TILE);
+                        }
+                    }
+                }
+            }
+            this.ball = this.board[ball.getI()][ball.getJ()+1];
+            return true;
+        }else{
+            System.out.println("Invalid movement argument");
+            return false;
+        }
+
+    }
 
      public void applySettings(Settings settings){
          this.width = settings.getWidth();
@@ -70,6 +178,19 @@ public class Board {
         return false;
     }
 
+    public boolean hasWon(){
+        int freeBoxes = 0;
+        for(int i = 0; i < this.height; i++){
+            for(int j = 0;j < this.width; j++){
+                if(!this.board[i][j].isGoal() && this.board[i][j].getType().equals(SquareType.BOX)){
+                    freeBoxes++;
+                }
+            }
+        }
+
+        return freeBoxes == 0;
+    }
+
     private boolean checkPath(Square first, Square prev, Square next){
         int minI, minJ, maxI, maxJ;
         minI = Math.max(0, next.getI()-1);
@@ -127,9 +248,11 @@ public class Board {
             for(int j = 0; j < this.width;j++){
                 if(this.board[i][j].getType() == SquareType.BALL ){
                     ballCounter++;
+                    this.ball = this.board[i][j];
                 }else if(this.board[i][j].getType() == SquareType.BOX ){
                     boxCounter++;
                 }else if(this.board[i][j].getType() == SquareType.GOAL ){
+                    this.board[i][j].setGoal();
                     goalCounter++;
                 }
             }
@@ -143,24 +266,3 @@ public class Board {
 
 }
 
-
-/*
-System.out.println(minI + " " + minJ + " " + maxI + " " + maxJ);
-
-
-        for(int i = minI; i <= maxI; i++){
-            for(int j = minJ; j <= maxJ; j++){
-                if(next.getJ() != j || next.getI() != i){
-                    if(this.board[i][j].getType().equals(SquareType.WALL) && first == null){
-                        return checkPath(next, next, this.board[i][j]);
-                    }else if(this.board[i][j].getType().equals(SquareType.WALL) && !prev.equals(this.board[i][j])){
-                    System.out.println("i:" + i + " j:" + j + " currI:" + next.getI() + " currJ:" + next.getJ());
-                        return checkPath(first, next, this.board[i][j]);
-                    }else if(this.board[i][j].equals(first) && !prev.equals(first)){
-                        return true;
-                    }
-                }
-
-            }
-        }
-* */

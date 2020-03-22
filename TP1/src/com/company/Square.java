@@ -4,7 +4,7 @@ import java.util.Objects;
 
 public class Square {
     private SquareType type;
-    private boolean blocked;
+    private boolean isGoal;
     private int i;
     private int j;
 
@@ -12,16 +12,20 @@ public class Square {
     public Square(int i, int j, boolean blocked, SquareType type){
         this.i = i;
         this.j = j;
-        this.blocked = ( type == SquareType.WALL || type == SquareType.VOID)? true : false;
+        this.isGoal = false;
         this.type = type;
+    }
+
+    public boolean isGoal(){
+        return this.isGoal;
+    }
+
+    public void setGoal(){
+        this.isGoal = true;
     }
 
     public SquareType getType() {
         return type;
-    }
-
-    public boolean isBlocked() {
-        return blocked;
     }
 
     public int getI() {
@@ -36,23 +40,18 @@ public class Square {
         this.type = type;
     }
 
-    public void setBlocked(boolean blocked) {
-        this.blocked = blocked;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Square square = (Square) o;
-        return blocked == square.blocked &&
-                i == square.i &&
+        return i == square.i &&
                 j == square.j &&
                 type == square.type;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, blocked, i, j);
+        return Objects.hash(type,i, j);
     }
 }

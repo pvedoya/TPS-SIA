@@ -1,6 +1,7 @@
 package com.company;
 
 import java.io.File;
+import java.util.Scanner;
 
 public class Main {
 
@@ -13,8 +14,16 @@ public class Main {
         Board board = new Board();
         board.applySettings(settings);
 
-        Solver solver = new Solver(settings.getAlgorithm(), board);
-        solver.generateSolution();
+        Scanner input = new Scanner(System.in);
+        String str = input.nextLine();
+        while(!str.equals("END")){
+            board.makeMove(str);
+            board.printBoard();
+            str = input.nextLine();
+        }
+
+//        Solver solver = new Solver(settings.getAlgorithm(), board);
+//        solver.generateSolution();
 
         System.out.println("Solved");
     }
