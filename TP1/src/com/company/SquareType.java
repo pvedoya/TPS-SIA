@@ -1,7 +1,7 @@
 package com.company;
 
 public enum SquareType {
-    VOID(' '), WALL('#'), BOX('$'), BALL('@'), TILE(' '), GOAL('.');
+    WALL('#'),BOX('$'),BALL('@'),TILE(' '),GOAL('.');
 
     private char icon;
 
@@ -9,7 +9,7 @@ public enum SquareType {
         this.icon = icon;
     }
 
-    public char getIcon() {
-        return icon;
+    public char getIcon(){
+        return this.icon;
     }
 }

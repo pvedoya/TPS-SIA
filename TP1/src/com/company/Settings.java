@@ -6,14 +6,14 @@ import java.util.*;
 public class Settings {
     private int width;
     private int height;
-    private Set<Square> squares;
     private String algorithm;
+    private char[][] board;
+    private int goals;
 //    heuristic??
 
     public Settings(){
         this.width = 0;
         this.height = 0;
-        this.squares = new HashSet<>();
     }
 
     public void loadSettings(File file){
@@ -51,11 +51,12 @@ public class Settings {
 
         this.width = maxLength;
         this.height = lineCount;
+        this.board = new char[this.height][this.width];
 
-        readSquares(lines);
+        readLines(lines);
     }
 
-        private boolean checkAlgorithm(Scanner scanner){
+    private boolean checkAlgorithm(Scanner scanner){
         String str = "";
 
         str = scanner.nextLine();
@@ -67,62 +68,54 @@ public class Settings {
         return false;
     }
 
-    private void readSquares(List<String> lines){
+    private void readLines(List<String> lines){
         int i = 0;
         boolean foundWall = false;
 
         while(i < lines.size()){
             String str = lines.get(i);
             foundWall = false;
-            for (int j = 0; j < str.length(); j++){
+            int j;
+            for (j = 0; j < str.length(); j++){
                 if(str.charAt(j) == '#' ){
                     if(!foundWall){
                         foundWall = true;
                     }
-                    Square square = new Square(i, j, true, SquareType.WALL);
-                    this.squares.add(square);
+                    board[i][j] = '#';
                 }else if(str.charAt(j) == ' ' && foundWall){
-                    Square square = new Square(i, j, true, SquareType.TILE);
-                    this.squares.add(square);
+                    board[i][j] = ' ';
                 }else if(str.charAt(j) == '.'){
-                    Square square = new Square(i, j, true, SquareType.GOAL);
-                    this.squares.add(square);
+                    board[i][j] = '.';
+                    goals++;
                 }else if(str.charAt(j) == '$'){
-                    Square square = new Square(i, j, true, SquareType.BOX);
-                    this.squares.add(square);
+                    board[i][j] = '$';
                 }else if(str.charAt(j) == '@'){
-                    Square square = new Square(i, j, true, SquareType.BALL);
-                    this.squares.add(square);
+                    board[i][j] = '@';
+                }else{
+                    board[i][j] = ' ';
                 }
             }
-
+            while(j < this.width){
+                board[i][j++] = ' ';
+            }
             i++;
         }
-
+        if(!foundWall){
+            System.out.println("Wrong board format detected");
+            System.exit(0);
+        }
     }
 
     public int getWidth() {
         return width;
     }
 
-    public void setWidth(int width) {
-        this.width = width;
-    }
-
     public int getHeight() {
         return height;
     }
 
-    public void setHeight(int height) {
-        this.height = height;
-    }
-
-    public Set<Square> getSquares() {
-        return squares;
-    }
-
-    public void setSquares(Set<Square> squares) {
-        this.squares = squares;
+    public char[][] getBoard() {
+        return board;
     }
 
     public String getAlgorithm() {
@@ -131,5 +124,9 @@ public class Settings {
 
     public void setAlgorithm(String algorithm) {
         this.algorithm = algorithm;
+    }
+
+    public int getGoals() {
+        return goals;
     }
 }
