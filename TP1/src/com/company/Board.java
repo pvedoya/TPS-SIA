@@ -213,6 +213,8 @@ public class Board implements Cloneable{
     public Board cloneBoard() {
         Board clone = new Board(this.width, this.height, new char[this.height][this.width]);
 
+        clone.goals = this.goals;
+
         for(int i = 0; i < this.height; i++){
             for( int j = 0; j < this.width; j++){
                 clone.board[i][j] = this.board[i][j];
@@ -349,4 +351,3 @@ public class Board implements Cloneable{
     }
 
 }
-
