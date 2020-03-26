@@ -72,22 +72,36 @@ public class Board implements Cloneable{
         int boxCounter = 0;
         int ballCounter = 0;
 
+
         for(int i = 0; i < this.height; i++){
             for(int j = 0; j < this.width;j++){
                 if(this.board[i][j] == SquareType.BALL.getIcon() ){
                     ballCounter++;
                     this.ballX = i;
                     this.ballY = j;
-                }else if(this.board[i][j] == SquareType.BOX.getIcon() ){
+                }else if(this.board[i][j] == SquareType.BALLGOAL.getIcon()){
+                    this.ballX = i;
+                    this.ballY = j;
+                    this.board[i][j] = '@';
+                    Integer[] aux = {i, j};
+                    this.goals.add(aux);
+                    ballCounter++;
+                    goalCounter++;
+                }else if(this.board[i][j] == SquareType.BOX.getIcon()){
                     boxCounter++;
                 }else if(this.board[i][j] == SquareType.GOAL.getIcon() ){
                     Integer[] aux = {i, j};
                     this.goals.add(aux);
                     goalCounter++;
+                }else if(this.board[i][j] == SquareType.BOXGOAL.getIcon()){
+                    this.board[i][j] = '$';
+                    Integer[] aux = {i, j};
+                    this.goals.add(aux);
+                    goalCounter++;
+                    boxCounter++;
                 }
             }
         }
-
         if(goalCounter != boxCounter || ballCounter != 1){
             return false;
         }
@@ -226,23 +240,24 @@ public class Board implements Cloneable{
     }
 
     public boolean hasBlocked() {
+        int blocked = 0;
         for(int i = 0; i < this.height; i++){
             for(int j = 0;j < this.width; j++){
                 if(this.board[i][j] == SquareType.BOX.getIcon() && !isGoal(i,j)){
                     if((this.board[i-1][j] == SquareType.WALL.getIcon() || this.board[i-1][j] == SquareType.BOX.getIcon()) && (this.board[i][j-1] == SquareType.WALL.getIcon() || this.board[i][j-1] == SquareType.BOX.getIcon())){
-                        return true;
+                        blocked++;
                     }else if((this.board[i-1][j] == SquareType.WALL.getIcon() || this.board[i-1][j] == SquareType.BOX.getIcon()) && this.board[i][j+1] == SquareType.WALL.getIcon() || this.board[i][j+1] == SquareType.BOX.getIcon()){
-                        return true;
+                        blocked++;
                     }else if((this.board[i+1][j] == SquareType.WALL.getIcon() || this.board[i+1][j] == SquareType.BOX.getIcon()) && (this.board[i][j+1] == SquareType.WALL.getIcon() || this.board[i][j+1] == SquareType.BOX.getIcon())){
-                        return true;
+                        blocked++;
                     }else if((this.board[i+1][j] == SquareType.WALL.getIcon() || this.board[i+1][j] == SquareType.BOX.getIcon()) && (this.board[i][j-1] == SquareType.WALL.getIcon() | this.board[i][j-1] == SquareType.BOX.getIcon())){
-                        return true;
+                        blocked++;
                     }
                 }
             }
         }
 
-        return false;
+        return blocked == this.goals.size();
     }
 
     private boolean isGoal(int i, int j){

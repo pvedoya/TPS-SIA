@@ -92,7 +92,12 @@ public class Settings {
                     board[i][j] = '$';
                 }else if(str.charAt(j) == '@'){
                     board[i][j] = '@';
-                }else{
+                }else if(str.charAt(j) == '+'){
+                    board[i][j] = '+';
+                }else if(str.charAt(j) == '*'){
+                    board[i][j] = '*';
+                }
+                else{
                     board[i][j] = ' ';
                 }
             }
