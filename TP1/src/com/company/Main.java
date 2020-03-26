@@ -19,8 +19,8 @@ public class Main {
         solver.generateSolution();
 
         List<Node> moves = solver.getMoves();
-        for (Node n: moves) {
-            n.getBoard().printBoard();
-        }
+//        for (Node n: moves) {
+//            n.getBoard().printBoard();
+//        }
     }
 }

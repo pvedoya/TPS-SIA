@@ -63,6 +63,7 @@ public class Settings {
 
         if(str.equals("DFS") || str.equals("BFS") || str.equals("IDDFS") || str.equals("GGS") || str.equals("A*") || str.equals("IDA*")){
             this.algorithm = str;
+
             return true;
         }
         return false;
@@ -129,4 +130,5 @@ public class Settings {
     public int getGoals() {
         return goals;
     }
+
 }

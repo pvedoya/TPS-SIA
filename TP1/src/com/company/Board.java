@@ -228,7 +228,7 @@ public class Board implements Cloneable{
     public boolean hasBlocked() {
         for(int i = 0; i < this.height; i++){
             for(int j = 0;j < this.width; j++){
-                if(this.board[i][j] == SquareType.BOX.getIcon()){
+                if(this.board[i][j] == SquareType.BOX.getIcon() && !isGoal(i,j)){
                     if((this.board[i-1][j] == SquareType.WALL.getIcon() || this.board[i-1][j] == SquareType.BOX.getIcon()) && (this.board[i][j-1] == SquareType.WALL.getIcon() || this.board[i][j-1] == SquareType.BOX.getIcon())){
                         return true;
                     }else if((this.board[i-1][j] == SquareType.WALL.getIcon() || this.board[i-1][j] == SquareType.BOX.getIcon()) && this.board[i][j+1] == SquareType.WALL.getIcon() || this.board[i][j+1] == SquareType.BOX.getIcon()){
@@ -242,6 +242,15 @@ public class Board implements Cloneable{
             }
         }
 
+        return false;
+    }
+
+    private boolean isGoal(int i, int j){
+        for (Integer[] pair: this.goals) {
+            if(pair[0] == i && pair[1] == j){
+                return true;
+            }
+        }
         return false;
     }
 
