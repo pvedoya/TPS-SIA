@@ -9,7 +9,7 @@ public class Solver {
     private ArrayList<Node> moves;
     private int moveQ;
 
-    public Solver(String algorithm, Board board){
+    public Solver(String algorithm,Board board){
         this.algorithm = algorithm;
         this.board = board;
         this.moves = new ArrayList<>();
@@ -17,6 +17,7 @@ public class Solver {
 
     public boolean generateSolution(){
         boolean found = false;
+
         switch(this.algorithm){
             case "DFS": found = solveDFS(); break;
             case "BFS": found = solveBFS(); break;
@@ -32,7 +33,7 @@ public class Solver {
             findPath();
             System.out.println("Solved in " + moveQ + " moves");
         }else{
-
+            System.out.println("Could not find solution to map using " + algorithm + " algorithm");
         }
         return found;
     }
@@ -48,45 +49,65 @@ public class Solver {
     }
 
     private boolean solveIDAstar() {
-        return true;
+        System.out.println("IDAstrar");
+        return false;
     }
 
     private boolean solveAstar() {
-        return true;
+        System.out.println("AStar");
+        return false;
     }
 
     private boolean solveGGS() {
-        return true;
+        System.out.println("GGS");
+        return false;
     }
 
     private boolean solveIDDFS() {
-        return true;
+        int counter = 0;
+        boolean found = false;
+
+        while(!found){
+            Node node = new Node(this.board, null, null);
+            found = solveDLS(node, counter);
+            counter++;
+        }
+
+        return found;
     }
 
-    private boolean solveBFS() {
-        Node node = new Node(this.board, null, null);
+    private boolean solveDLS(Node node, int limit){
         HashSet<String> explored = new HashSet<>();
-        Queue<Node> frontier = new LinkedList<>();
-        frontier.add(node);
+        Stack<Node> frontier = new Stack<>();
+        int counter = 0;
 
         if(node.isGoal()){
+            moves.add(node);
             return true;
         }
 
-        while(!frontier.isEmpty()){
-            node = frontier.poll();
-            explored.add(node.getStringBoard());
-            node.generateOutcomes();
+        frontier.push(node);
 
-            for(Node n : node.getOutcomes()){
-                if(!explored.contains(n.getStringBoard()) && !frontier.contains(n)){
-                    if(n.isGoal()){
-                        moves.add(n);
-                        return true;
+        while(!frontier.empty() && counter < limit){
+            counter++;
+            Node aux = frontier.pop();
+
+            if( !explored.contains(aux.getStringBoard())){
+                explored.add(aux.getStringBoard());
+
+                if(aux.isGoal()){
+                    moves.add(aux);
+                    return true;
+                }
+
+                aux.generateOutcomes();
+                for(Node n : aux.getOutcomes()){
+                    if(!explored.contains(n.getStringBoard()) && !n.getBoard().hasBlocked()){
+                        frontier.add(n);
                     }
-                    frontier.add(n);
                 }
             }
+
         }
 
         return false;
@@ -101,7 +122,7 @@ public class Solver {
         while(!frontier.empty()){
             node = frontier.pop();
 
-            if( !explored.contains(node.getStringBoard())){
+            if( !explored.contains(node.getStringBoard())/*&& !n.getBoard().hasBlocked()*/){ //ADDING THIS HARMS PERFORMANCE. TEST IF IS NEEDED IN OTHER COMPUTERS
                 explored.add(node.getStringBoard());
 
                 if(node.isGoal()){
@@ -111,12 +132,41 @@ public class Solver {
                 node.generateOutcomes();
                 for(Node n : node.getOutcomes()){
 
-                    if(!explored.contains(n.getStringBoard())){
+                    if(!explored.contains(n.getStringBoard()) ){
                         frontier.add(n);
                     }
                 }
             }
 
+        }
+        return false;
+    }
+
+    private boolean solveBFS() {
+        Node node = new Node(this.board, null, null);
+        HashSet<String> explored = new HashSet<>();
+        Queue<Node> frontier = new LinkedList<>();
+        frontier.add(node);
+
+        if(node.isGoal()){
+            moves.add(node);
+            return true;
+        }
+
+        while(!frontier.isEmpty()){
+            node = frontier.poll();
+            explored.add(node.getStringBoard());
+            node.generateOutcomes();
+
+            for(Node n : node.getOutcomes()){
+                if(!explored.contains(n.getStringBoard()) && !frontier.contains(n) && !n.getBoard().hasBlocked()){
+                    if(n.isGoal()){
+                        moves.add(n);
+                        return true;
+                    }
+                    frontier.add(n);
+                }
+            }
         }
 
         return false;
