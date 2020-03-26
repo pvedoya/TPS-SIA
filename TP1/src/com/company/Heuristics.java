@@ -5,19 +5,19 @@ import java.util.ArrayList;
 public class Heuristics {
 
     private long INFINITE_COST = 1000000000;
-    private Board board;
     private ArrayList<Integer[]> goalCoordinates = new ArrayList<>();
     private ArrayList<Integer[]> boxCoordinates = new ArrayList<>();
-
-    public Heuristics (Board board) {
-        this.board = board;
-    }
 
     /*
     en esta heurística la evaluación es sobre la cantidad de movimientos necesarios para terminar el juego
     función que retorna la mínima cantidad de movimientos que hay que realizar para terminar el juego
      */
-    public long getMovementCost (Node node, long movesFromStart) {
+    public long getMovementCost (Board board) {
+        Node init = new Node (board, null, null);
+        return getMovementCostRec(init, 0);
+    }
+
+    private long getMovementCostRec (Node node, long movesFromStart) {
 
         /*
         si el nodo está en la posición ganadora, retornamos la cantidad de movimientos
@@ -37,7 +37,7 @@ public class Heuristics {
         long minMovements = INFINITE_COST;
         node.generateOutcomes();
         for (Node n : node.getOutcomes()) {
-            long aux = getMovementCost(n, movesFromStart + 1);
+            long aux = getMovementCostRec(n, movesFromStart + 1);
             minMovements = Math.min(minMovements, aux);
         }
 
@@ -51,9 +51,9 @@ public class Heuristics {
     función que retorna una suma de las distancias de las cajas a los goals
     si las cajas están en las posiciones de los goals, retorna 0
      */
-    public int getBoxesCost () {
+    public int getBoxesCost (Board board) {
 
-        getCoordinates();
+        getCoordinates(board);
         int cost = 0;
         int count = 0;
 
@@ -89,10 +89,10 @@ public class Heuristics {
         return Math.abs(from[0] - to [0]) + Math.abs(from[1] - to[1]);
     }
 
-    private void getCoordinates() {
-        char[][] board = this.board.getBoard();
-        int height = this.board.getHeight();
-        int width = this.board.getWidth();
+    private void getCoordinates(Board b) {
+        char[][] board = b.getBoard();
+        int height = b.getHeight();
+        int width = b.getWidth();
 
         for (int i = 0; i < width; i ++) {
             for (int j = 0; j < height; j++) {
@@ -107,11 +107,4 @@ public class Heuristics {
         }
     }
 
-    public Board getBoard() {
-        return board;
-    }
-
-    public void setBoard(Board board) {
-        this.board = board;
-    }
 }
