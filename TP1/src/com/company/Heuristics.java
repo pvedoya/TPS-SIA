@@ -14,6 +14,7 @@ public class Heuristics {
     }
 
     /*
+    en esta heurística la evaluación es sobre la cantidad de movimientos necesarios para terminar el juego
     función que retorna la mínima cantidad de movimientos que hay que realizar para terminar el juego
      */
     public long getMovementCost (Node node, long movesFromStart) {
@@ -43,12 +44,14 @@ public class Heuristics {
         return minMovements + movesFromStart;
     }
 
-    private int manhattanDistance (Integer[] from, Integer[] to) {
-
-        return Math.abs(from[0] - to [0]) + Math.abs(from[1] - to[1]);
-    }
-
-    private int getBoxesCost () {
+    /*
+    en esta heurística la evaluación es sobre la distancia de las cajas a los goals
+    no nos fijamos en los obstáculos que pueden haber en el medio
+    (sino resultaría muy parecido a la heurística sobre la cantidad de movimientos)
+    función que retorna una suma de las distancias de las cajas a los goals
+    si las cajas están en las posiciones de los goals, retorna 0
+     */
+    public int getBoxesCost () {
 
         getCoordinates();
         int cost = 0;
@@ -79,6 +82,11 @@ public class Heuristics {
         }
 
         return cost;
+    }
+
+    private int manhattanDistance (Integer[] from, Integer[] to) {
+
+        return Math.abs(from[0] - to [0]) + Math.abs(from[1] - to[1]);
     }
 
     private void getCoordinates() {
