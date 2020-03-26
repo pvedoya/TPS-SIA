@@ -63,34 +63,77 @@ public class Solver {
         return false;
     }
 
+//    private boolean solveIDDFS() {
+//        int counter = 0;
+//        boolean found = false;
+//
+//        while(!found){
+//            Node node = new Node(this.board, null, null);
+//            found = solveDLS(node, counter);
+//            counter++;
+//        }
+//
+//        return true;
+//    }
+//
+//    private boolean solveDLS(Node node, int limit){
+//        HashSet<String> explored = new HashSet<>();
+//        Stack<Node> frontier = new Stack<>();
+//        int counter = 0;
+//
+//        if(node.isGoal()){
+//            moves.add(node);
+//            return true;
+//        }
+//
+//        frontier.push(node);
+//
+//        while(!frontier.empty() && counter < limit){
+//            counter++;
+//            Node aux = frontier.pop();
+//
+//            if( !explored.contains(aux.getStringBoard())){
+//                explored.add(aux.getStringBoard());
+//
+//                if(aux.isGoal()){
+//                    moves.add(aux);
+//                    return true;
+//                }
+//
+//                aux.generateOutcomes();
+//                for(Node n : aux.getOutcomes()){
+//                    if(!explored.contains(n.getStringBoard()) && !n.getBoard().hasBlocked()){
+//                        frontier.add(n);
+//                    }
+//                }
+//            }
+//
+//        }
+//
+//        return false;
+//    }
+
     private boolean solveIDDFS() {
-        int counter = 0;
         boolean found = false;
-
-        while(!found){
-            Node node = new Node(this.board, null, null);
-            found = solveDLS(node, counter);
-            counter++;
-        }
-
-        return found;
-    }
-
-    private boolean solveDLS(Node node, int limit){
-        HashSet<String> explored = new HashSet<>();
         Stack<Node> frontier = new Stack<>();
-        int counter = 0;
+        HashSet<String> explored = new HashSet<>();
 
-        if(node.isGoal()){
-            moves.add(node);
-            return true;
-        }
-
+        Node node = new Node(this.board, null, null);
         frontier.push(node);
 
-        while(!frontier.empty() && counter < limit){
-            counter++;
-            Node aux = frontier.pop();
+        while(!found){
+            found = solveDLS(explored, frontier);
+        }
+
+        return true;
+    }
+
+    private boolean solveDLS( HashSet<String> explored, Stack<Node> previous){
+
+        Stack<Node> frontier = new Stack<>();
+
+        while(!previous.empty()){
+            Node aux = previous.pop();
 
             if( !explored.contains(aux.getStringBoard())){
                 explored.add(aux.getStringBoard());
@@ -109,9 +152,12 @@ public class Solver {
             }
 
         }
-
+        for (Node node : frontier) {
+            previous.add(node);
+        }
         return false;
     }
+
 
     private boolean solveDFS(){
         Node node = new Node(this.board, null, null);
@@ -122,7 +168,7 @@ public class Solver {
         while(!frontier.empty()){
             node = frontier.pop();
 
-            if( !explored.contains(node.getStringBoard())/*&& !n.getBoard().hasBlocked()*/){ //ADDING THIS HARMS PERFORMANCE. TEST IF IS NEEDED IN OTHER COMPUTERS
+            if( !explored.contains(node.getStringBoard()) ){
                 explored.add(node.getStringBoard());
 
                 if(node.isGoal()){
@@ -132,7 +178,7 @@ public class Solver {
                 node.generateOutcomes();
                 for(Node n : node.getOutcomes()){
 
-                    if(!explored.contains(n.getStringBoard()) ){
+                    if(!explored.contains(n.getStringBoard()) && !n.getBoard().hasBlocked()){
                         frontier.add(n);
                     }
                 }
@@ -155,6 +201,7 @@ public class Solver {
 
         while(!frontier.isEmpty()){
             node = frontier.poll();
+
             explored.add(node.getStringBoard());
             node.generateOutcomes();
 
