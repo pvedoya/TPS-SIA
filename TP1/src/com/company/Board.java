@@ -245,7 +245,6 @@ public class Board implements Cloneable{
         return false;
     }
 
-
     public boolean makeMove(String direction){
         if(direction.equals("UP")){
             if(this.ballX > 0 && !(this.board[this.ballX-1][this.ballY] == SquareType.WALL.getIcon())){
