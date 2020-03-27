@@ -14,13 +14,12 @@ public class Main {
         Board board = new Board(settings.getWidth(),settings.getHeight(),settings.getBoard());
         board.validate();
 
-
         Solver solver = new Solver(settings.getAlgorithm(), board);
         solver.generateSolution();
 
-        List<Node> moves = solver.getMoves();
-        for (Node n: moves) {
-            n.getBoard().printBoard();
-        }
+//        List<Node> moves = solver.getMoves();
+//        for (Node n: moves) {
+//            n.getBoard().printBoard();
+//        }
     }
 }

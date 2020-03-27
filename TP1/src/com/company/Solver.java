@@ -32,7 +32,7 @@ public class Solver {
             findPath();
             System.out.println("Solved in " + moveQ + " moves");
         }else{
-
+            System.out.println("Could not find solution to map using " + algorithm + " algorithm");
         }
         return found;
     }
@@ -48,10 +48,12 @@ public class Solver {
     }
 
     private boolean solveIDAstar() {
-        return true;
+        System.out.println("IDAstrar");
+        return false;
     }
 
     private boolean solveAstar() {
+        System.out.println("AStar");
         Node startNode = new Node(this.board, null, null);
         RouteNode startRouteNode = new RouteNode(startNode, null, 0, heuristic(startNode));
 
@@ -90,41 +92,105 @@ public class Solver {
     }
 
     private boolean solveGGS() {
-        return true;
-    }
-
-    private boolean solveIDDFS() {
-        return true;
-    }
-
-    private boolean solveBFS() {
-        Node node = new Node(this.board, null, null);
-        HashSet<String> explored = new HashSet<>();
-        Queue<Node> frontier = new LinkedList<>();
-        frontier.add(node);
-
-        if(node.isGoal()){
-            return true;
-        }
-
-        while(!frontier.isEmpty()){
-            node = frontier.poll();
-            explored.add(node.getStringBoard());
-            node.generateOutcomes();
-
-            for(Node n : node.getOutcomes()){
-                if(!explored.contains(n.getStringBoard()) && !frontier.contains(n)){
-                    if(n.isGoal()){
-                        moves.add(n);
-                        return true;
-                    }
-                    frontier.add(n);
-                }
-            }
-        }
-
+        System.out.println("GGS");
         return false;
     }
+
+//    private boolean solveIDDFS() {
+//        int counter = 0;
+//        boolean found = false;
+//
+//        while(!found){
+//            Node node = new Node(this.board, null, null);
+//            found = solveDLS(node, counter);
+//            counter++;
+//        }
+//
+//        return true;
+//    }
+//
+//    private boolean solveDLS(Node node, int limit){
+//        HashSet<String> explored = new HashSet<>();
+//        Stack<Node> frontier = new Stack<>();
+//        int counter = 0;
+//
+//        if(node.isGoal()){
+//            moves.add(node);
+//            return true;
+//        }
+//
+//        frontier.push(node);
+//
+//        while(!frontier.empty() && counter < limit){
+//            counter++;
+//            Node aux = frontier.pop();
+//
+//            if( !explored.contains(aux.getStringBoard())){
+//                explored.add(aux.getStringBoard());
+//
+//                if(aux.isGoal()){
+//                    moves.add(aux);
+//                    return true;
+//                }
+//
+//                aux.generateOutcomes();
+//                for(Node n : aux.getOutcomes()){
+//                    if(!explored.contains(n.getStringBoard()) && !n.getBoard().hasBlocked()){
+//                        frontier.add(n);
+//                    }
+//                }
+//            }
+//
+//        }
+//
+//        return false;
+//    }
+
+    private boolean solveIDDFS() {
+        boolean found = false;
+        Stack<Node> frontier = new Stack<>();
+        HashSet<String> explored = new HashSet<>();
+
+        Node node = new Node(this.board, null, null);
+        frontier.push(node);
+
+        while(!found){
+            found = solveDLS(explored, frontier);
+        }
+
+        return true;
+    }
+
+    private boolean solveDLS( HashSet<String> explored, Stack<Node> previous){
+
+        Stack<Node> frontier = new Stack<>();
+
+        while(!previous.empty()){
+            Node aux = previous.pop();
+
+            if( !explored.contains(aux.getStringBoard())){
+                explored.add(aux.getStringBoard());
+
+                if(aux.isGoal()){
+                    moves.add(aux);
+                    return true;
+                }
+
+                aux.generateOutcomes();
+                for(Node n : aux.getOutcomes()){
+                    if(!explored.contains(n.getStringBoard()) && !n.getBoard().hasBlocked()){
+                        frontier.add(n);
+                    }
+                }
+            }
+
+        }
+        for (Node node : frontier) {
+            previous.add(node);
+        }
+        return false;
+    }
+
 
     private boolean solveDFS(){
         Node node = new Node(this.board, null, null);
@@ -135,7 +201,7 @@ public class Solver {
         while(!frontier.empty()){
             node = frontier.pop();
 
-            if( !explored.contains(node.getStringBoard())){
+            if( !explored.contains(node.getStringBoard()) ){
                 explored.add(node.getStringBoard());
 
                 if(node.isGoal()){
@@ -145,12 +211,42 @@ public class Solver {
                 node.generateOutcomes();
                 for(Node n : node.getOutcomes()){
 
-                    if(!explored.contains(n.getStringBoard())){
+                    if(!explored.contains(n.getStringBoard()) && !n.getBoard().hasBlocked()){
                         frontier.add(n);
                     }
                 }
             }
 
+        }
+        return false;
+    }
+
+    private boolean solveBFS() {
+        Node node = new Node(this.board, null, null);
+        HashSet<String> explored = new HashSet<>();
+        Queue<Node> frontier = new LinkedList<>();
+        frontier.add(node);
+
+        if(node.isGoal()){
+            moves.add(node);
+            return true;
+        }
+
+        while(!frontier.isEmpty()){
+            node = frontier.poll();
+
+            explored.add(node.getStringBoard());
+            node.generateOutcomes();
+
+            for(Node n : node.getOutcomes()){
+                if(!explored.contains(n.getStringBoard()) && !frontier.contains(n) && !n.getBoard().hasBlocked()){
+                    if(n.isGoal()){
+                        moves.add(n);
+                        return true;
+                    }
+                    frontier.add(n);
+                }
+            }
         }
 
         return false;
