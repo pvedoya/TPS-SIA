@@ -1,57 +1,47 @@
 package com.company;
 
+import javafx.util.Pair;
+
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Heuristics {
 
-    private long INFINITE_COST = 1000000000;
+    private Integer INFINITE_COST = 1000000000;
     private ArrayList<Integer[]> goalCoordinates = new ArrayList<>();
     private ArrayList<Integer[]> boxCoordinates = new ArrayList<>();
+    private Map<Integer[], Map<Integer[], Integer>> matrix = new HashMap<>();
 
     /*
-    en esta heurística la evaluación es sobre la cantidad de movimientos necesarios para terminar el juego
-    función que retorna la mínima cantidad de movimientos que hay que realizar para terminar el juego
+    en esta heurística la evaluación es sobre la cercanía de las cajas a los goals
+    se toma un promedio de la cercanía de caja cada a un goal y luego se suman los promedios de cada goal
      */
-    public long getMovementCost (Board board) {
-        Node init = new Node (board, null, null);
-        return getMovementCostRec(init, 0);
-    }
+    public int avrgManhattanDistance (Board board) {
 
-    private long getMovementCostRec (Node node, long movesFromStart) {
+        getCoordinates(board);
+        int sum = 0;
+        int avg;
 
-        /*
-        si el nodo está en la posición ganadora, retornamos la cantidad de movimientos
-        realizados hasta llegar a la posición ganadora
-        */
-        if (node.getBoard().hasWon()) {
-            return movesFromStart;
-        }
-        /*
-        si el nodo no tiene más movimientos para hacer porque las cajas están en esquinas
-        retornamos una cantidad de movimientos infinita pues de esta manera el juego está perdido
-         */
-        if (node.getBoard().hasBlocked()) {
-            return INFINITE_COST;
+        for (Integer[] goalCoordinate : goalCoordinates) {
+            avg = 0;
+            for (int i = 0 ; i < boxCoordinates.size(); i++) {
+                avg += manhattanDistance(goalCoordinate, boxCoordinates.get(i));
+            }
+            avg = avg / boxCoordinates.size();
+            sum += avg;
         }
 
-        long minMovements = INFINITE_COST;
-        node.generateOutcomes();
-        for (Node n : node.getOutcomes()) {
-            long aux = getMovementCostRec(n, movesFromStart + 1);
-            minMovements = Math.min(minMovements, aux);
-        }
-
-        return minMovements + movesFromStart;
+        return sum;
     }
 
     /*
     en esta heurística la evaluación es sobre la distancia de las cajas a los goals
-    no nos fijamos en los obstáculos que pueden haber en el medio
-    (sino resultaría muy parecido a la heurística sobre la cantidad de movimientos)
+    se le asigna una caja a cada goal dependiendo de las que esté más cerca
     función que retorna una suma de las distancias de las cajas a los goals
     si las cajas están en las posiciones de los goals, retorna 0
      */
-    public int getBoxesCost (Board board) {
+    public int simpleLowerBound (Board board) {
 
         getCoordinates(board);
         int cost = 0;
@@ -105,6 +95,52 @@ public class Heuristics {
                 }
             }
         }
+    }
+
+    /*
+    función heurística que asigna un par (box, goal) con el punto de minimizar las jugadas necesarias
+     no importa la posición del jugador
+     retorna las coordanadas de cada box a su determinado goal
+     */
+    public int minimumMatchingLowerBound (Board board) {
+
+        getCoordinates(board);
+        int movesCount = INFINITE_COST;
+        for (Integer[] boxCoordinate : boxCoordinates ){
+            Map<Integer[], Integer> goalColumns = matrix.put(boxCoordinate, new HashMap<>());
+            for (Integer[] goalCoordinate : goalCoordinates) {
+                movesCount = movesCounter(board, boxCoordinate, goalCoordinate);
+                if (goalColumns != null) goalColumns.put(goalCoordinate, movesCount);
+            }
+        }
+
+        /* elegir los mínimos del mapa y sumar */
+        return -1;
+    }
+
+    private int movesCounter (Board board, Integer[] from, Integer[] to) {
+
+        char[][] b = board.getBoard();
+        String[] directions = new String[] {"UP", "DOWN", "LEFT", "RIGHT"};
+        boolean deadLock = false;
+        int minMoves = INFINITE_COST;
+
+        while (!deadLock) {
+            for (String direction: directions) {
+                switch (direction) {
+                    case "UP":
+                        break;
+                    case "DOWN":
+                        break;
+                    case "LEFT":
+                        break;
+                    case "RIGHT":
+                        break;
+                }
+            }
+        }
+
+        return minMoves;
     }
 
 }
