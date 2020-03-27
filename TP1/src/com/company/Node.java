@@ -77,4 +77,5 @@ public class Node {
     public int hashCode() {
         return Objects.hash(board, direction, outcomes, stringBoard);
     }
+
 }
