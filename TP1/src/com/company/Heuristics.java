@@ -1,20 +1,34 @@
 package com.company;
 
+import java.io.File;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Heuristics {
 
-    private AtomicInteger INFINITE_COST = new AtomicInteger(1000000000);
-    private ArrayList<Integer[]> goalCoordinates = new ArrayList<>();
-    private ArrayList<Integer[]> boxCoordinates = new ArrayList<>();
-    private Integer[][] hungarianMatrix;
+    private static AtomicInteger INFINITE_COST = new AtomicInteger(1000000000);
+    private static ArrayList<Integer[]> goalCoordinates = new ArrayList<>();
+    private static ArrayList<Integer[]> boxCoordinates = new ArrayList<>();
+
+    public static void main (String[] args ) {
+        File readFile = new File("maps/" + args[0]);
+
+        Settings settings = new Settings();
+        settings.loadSettings(readFile);
+
+        Board board = new Board(settings.getWidth(),settings.getHeight(),settings.getBoard());
+        board.validate();
+
+        System.out.println("MANHATTAN DISTANCE 1: " + avrgManhattanDistance(board));
+        System.out.println("MANHATTAN DISTANCE 2: " + simpleLowerBound(board));
+        System.out.println("MHUNGARIAN MATRIX: " + minimumMatchingLowerBound(board));
+    }
 
     /*
     en esta heurística la evaluación es sobre la cercanía de las cajas a los goals
     se toma un promedio de la cercanía de caja cada a un goal y luego se suman los promedios de cada goal
      */
-    public int avrgManhattanDistance (Board board) {
+    public static int avrgManhattanDistance(Board board) {
 
         getCoordinates(board);
         int sum = 0;
@@ -22,8 +36,8 @@ public class Heuristics {
 
         for (Integer[] goalCoordinate : goalCoordinates) {
             avg = 0;
-            for (int i = 0 ; i < boxCoordinates.size(); i++) {
-                avg += manhattanDistance(goalCoordinate, boxCoordinates.get(i));
+            for (Integer[] boxCoordinate : boxCoordinates) {
+                avg += manhattanDistance(goalCoordinate, boxCoordinate);
             }
             avg = avg / boxCoordinates.size();
             sum += avg;
@@ -38,26 +52,24 @@ public class Heuristics {
     función que retorna una suma de las distancias de las cajas a los goals
     si las cajas están en las posiciones de los goals, retorna 0
      */
-    public int simpleLowerBound (Board board) {
+    public static int simpleLowerBound(Board board) {
 
         getCoordinates(board);
         int cost = 0;
-        int count = 0;
 
         for (Integer[] goalCoordinate : goalCoordinates) {
-            Integer[] distances = new Integer[boxCoordinates.size() - count];
-            for (int j = 0; j < boxCoordinates.size(); j++) {
-
-                if (boxCoordinates.get(j)[0] != -1 && boxCoordinates.get(j)[1] != -1) {
-                    distances[j - count] = manhattanDistance(boxCoordinates.get(j), goalCoordinate);
+            ArrayList<Integer> distances = new ArrayList<>();
+            for (Integer[] coord: boxCoordinates) {
+                if (coord[0] != -1 && coord[1] != -1) {
+                    distances.add(manhattanDistance(coord, goalCoordinate));
                 }
             }
 
             int minDistance = 1000000000;
             int pos = -1;
-            for (int k = 0; k < distances.length; k++) {
-                if (minDistance >= distances[k]) {
-                    minDistance = distances[k];
+            for (int k = 0; k < distances.size(); k++) {
+                if (minDistance >= distances.get(k)) {
+                    minDistance = distances.get(k);
                     pos = k;
                 }
             }
@@ -65,24 +77,23 @@ public class Heuristics {
             boxCoordinates.set(pos, new Integer[]{-1, -1});
 
             cost += minDistance;
-            count++;
         }
 
         return cost;
     }
 
-    private int manhattanDistance (Integer[] from, Integer[] to) {
+    private static int manhattanDistance (Integer[] from, Integer[] to) {
 
         return Math.abs(from[0] - to [0]) + Math.abs(from[1] - to[1]);
     }
 
-    private void getCoordinates(Board b) {
+    private static void getCoordinates(Board b) {
         char[][] board = b.getBoard();
         int height = b.getHeight();
         int width = b.getWidth();
 
-        for (int i = 0; i < width; i ++) {
-            for (int j = 0; j < height; j++) {
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
 
                 if (board[i][j] == SquareType.BOX.getIcon()){
                     boxCoordinates.add(new Integer[]{i, j});
@@ -99,10 +110,11 @@ public class Heuristics {
      no importa la posición del jugador
      retorna las coordanadas de cada box a su determinado goal
      */
-    public int minimumMatchingLowerBound (Board board) {
+    public static int minimumMatchingLowerBound (Board board) {
 
         getCoordinates(board);
-        hungarianMatrix = new Integer[boxCoordinates.size()][goalCoordinates.size()];
+        Integer[][] hungarianMatrix = new Integer[boxCoordinates.size()][goalCoordinates.size()];
+
         for (int i = 0; i < boxCoordinates.size(); i++){
             for (int j = 0; j < goalCoordinates.size(); j++) {
                 hungarianMatrix[i][j] = movesCounter(board, boxCoordinates.get(i), goalCoordinates.get(j));
@@ -140,7 +152,7 @@ public class Heuristics {
         return resp;
     }
 
-    private int movesCounter (Board board, Integer[] from, Integer[] to) {
+    private static int movesCounter(Board board, Integer[] from, Integer[] to) {
 
         char[][] b = board.getBoard();
         int[] dx = {-1, 1, 0, 0};
@@ -233,9 +245,7 @@ public class Heuristics {
 
         AtomicInteger minMoves = INFINITE_COST;
 
-        paths.forEach((direction, positions) -> {
-            minMoves.set(Math.min(minMoves.get(), positions.size() == 0 ? INFINITE_COST.get() : positions.size()));
-        });
+        paths.forEach((direction, positions) -> minMoves.set(Math.min(minMoves.get(), positions.size() == 0 ? INFINITE_COST.get() : positions.size())));
 
         return minMoves.get();
     }
