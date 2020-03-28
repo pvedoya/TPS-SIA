@@ -48,6 +48,7 @@ public class Solution {
         if (moves.isEmpty()) {
             System.out.println("Could not find a solution using " + algorithm);
         }else{
+            System.out.println("Solution found, copying data to solution.txt file on root folder");
             BufferedWriter writer = new BufferedWriter(new FileWriter("solution.txt"));
             writer.write("Found a solution in " + depth + " moves, time taken: " + time + " ms\n");
             writer.write("The cost for the algorithm used(" + algorithm + ") was " + cost + "\n");
