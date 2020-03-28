@@ -164,11 +164,42 @@ public class Solver {
 
     //todo
     private double heuristic(Node node) {
-        return 1;
+        Heuristics h = new Heuristics();
+        return h.avrgManhattanDistance(node.getBoard());
     }
 
     private boolean solveGGS() {
-        System.out.println("GGS");
+        System.out.println("GGs");
+        Node startNode = new Node(this.board, null, null);
+        RouteNode startRouteNode = new RouteNode(startNode, null, 0, heuristic(startNode));
+
+        Queue<RouteNode> frontier = new PriorityQueue<>();
+        Set<String> explored = new HashSet<>();
+
+        frontier.add(startRouteNode);
+
+        while (!frontier.isEmpty()) {
+            RouteNode currentRouteNode = frontier.poll(); //devuelve el nodo con menor costo por ser una priority queue
+
+            if (currentRouteNode.getNode().isGoal()) {
+                moves.add(currentRouteNode.getNode());
+                return true;
+            }
+
+            explored.add(currentRouteNode.getNode().getStringBoard());
+            currentRouteNode.getNode().generateOutcomes();
+
+            for(Node childNode : currentRouteNode.getNode().getOutcomes()){
+                //TODO CURRENTROUTENODE.GETPARENT?
+                RouteNode childRouteNode = new RouteNode(childNode, currentRouteNode.getNode(), 0, heuristic(childNode));
+                if(!explored.contains(childNode.getStringBoard()) && !frontier.contains(childRouteNode)){
+                    frontier.add(childRouteNode);
+                } else if (frontier.contains(childRouteNode)) {
+                    frontier.remove(childRouteNode);
+                    frontier.add(childRouteNode);
+                }
+            }
+        }
         return false;
     }
 
