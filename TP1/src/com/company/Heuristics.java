@@ -6,23 +6,29 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Heuristics {
 
-    private static AtomicInteger INFINITE_COST = new AtomicInteger(1000000000);
-    private static ArrayList<Integer[]> goalCoordinates = new ArrayList<>();
-    private static ArrayList<Integer[]> boxCoordinates = new ArrayList<>();
+    private static int INFINITE_COST = 1000000000;
+    private static ArrayList<Integer[]> goalCoordinates;
+    private static ArrayList<Integer[]> boxCoordinates;
 
-    public static void main (String[] args ) {
+    /*public static void main (String[] args ) {
         File readFile = new File("maps/" + args[0]);
 
         Settings settings = new Settings();
         settings.loadSettings(readFile);
 
-        Board board = new Board(settings.getWidth(),settings.getHeight(),settings.getBoard());
-        board.validate();
+        Board board1 = new Board(settings.getWidth(),settings.getHeight(),settings.getBoard());
+        board1.validate();
 
-        System.out.println("MANHATTAN DISTANCE 1: " + avrgManhattanDistance(board));
-        System.out.println("MANHATTAN DISTANCE 2: " + simpleLowerBound(board));
-        System.out.println("MHUNGARIAN MATRIX: " + minimumMatchingLowerBound(board));
-    }
+        Board board2 = new Board(settings.getWidth(),settings.getHeight(),settings.getBoard());
+        board1.validate();
+
+        Board board3 = new Board(settings.getWidth(),settings.getHeight(),settings.getBoard());
+        board1.validate();
+
+        System.out.println("MANHATTAN DISTANCE 1: " + avrgManhattanDistance(board1));
+        System.out.println("MANHATTAN DISTANCE 2: " + simpleLowerBound(board2));
+        System.out.println("HUNGARIAN MATRIX: " + minimumMatchingLowerBound(board3));
+    }*/
 
     /*
     en esta heurística la evaluación es sobre la cercanía de las cajas a los goals
@@ -91,6 +97,8 @@ public class Heuristics {
         char[][] board = b.getBoard();
         int height = b.getHeight();
         int width = b.getWidth();
+        goalCoordinates = new ArrayList<>();
+        boxCoordinates  = new ArrayList<>();
 
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
@@ -121,7 +129,8 @@ public class Heuristics {
             }
         }
 
-        Integer[] combinations = new Integer[(int) Math.pow(boxCoordinates.size(), goalCoordinates.size())];
+        int[] combinations = new int[(int) Math.pow(boxCoordinates.size(), goalCoordinates.size())];
+        Arrays.fill(combinations, 0, (int) Math.pow(boxCoordinates.size(), goalCoordinates.size()), 0);
         for (int i = 0; i < boxCoordinates.size(); i++) {
             for (int j = 0; j < goalCoordinates.size(); j++) {
 
@@ -143,7 +152,7 @@ public class Heuristics {
             }
         }
 
-        int resp = INFINITE_COST.get();
+        int resp = INFINITE_COST;
 
         for (int i = 0; i < boxCoordinates.size() * goalCoordinates.size(); i++) {
             resp = Math.min(resp, combinations[i]);
@@ -161,7 +170,7 @@ public class Heuristics {
         boolean[] deadlocks = {false, false, false, false};
         Integer[] currentPosition = from;
         ArrayList<Integer[]> possiblePositions;
-        boolean moved;
+        boolean moved, firstMove;
 
         Map<Integer, Set<Integer[]>> paths = new HashMap<>();
         for (int j = 0; j < dx.length; j++) {
@@ -174,11 +183,22 @@ public class Heuristics {
 
             possiblePositions = new ArrayList<>();
             moved = false;
-            for (int i = 0; i < dx.length; i++){
+            firstMove = true;
+
+            for (int i = 0; i < dx.length; ){
+
+                int direction;
+
+                /* el primer movimiento lo hacemos hacia directionIndex */
+                if (firstMove) {
+                    direction = directionIndex;
+                } else {
+                    direction = i;
+                }
 
                 /* primero chequeamos que la caja se pueda empujar en la dirección i */
                 Integer[] pushFrom = new Integer[]{-1, -1};
-                switch (i)  {
+                switch (direction)  {
                     case 0: pushFrom = new Integer[]{currentPosition[0] + dx[1], currentPosition[1] + dy[1]}; break;
                     case 1: pushFrom = new Integer[]{currentPosition[0] + dx[0], currentPosition[1] + dy[0]}; break;
                     case 2: pushFrom = new Integer[]{currentPosition[0] + dx[3], currentPosition[1] + dy[3]}; break;
@@ -190,9 +210,9 @@ public class Heuristics {
                 }
 
                 /* despues nos fijamos si nos podemos posicionar en la nueva posición */
-                Integer[] nextPostion = {currentPosition[0] + dx[i], currentPosition[1] + dy[i]};
+                Integer[] nextPostion = {currentPosition[0] + dx[direction], currentPosition[1] + dy[direction]};
 
-                if (b[nextPostion[0]][nextPostion[1]] == SquareType.GOAL.getIcon()) {
+                if (b[nextPostion[0]][nextPostion[1]] == SquareType.GOAL.getIcon() && nextPostion[0] == to[0] && nextPostion[1] == to[1]) {
 
                     /* conseguimos un recorrido hacia el goal*/
                     moved = true;
@@ -212,12 +232,18 @@ public class Heuristics {
                     if (!paths.get(directionIndex).contains(nextPostion)) possiblePositions.add(nextPostion);
                 }
 
+                if (firstMove) {
+                    firstMove = false;
+                } else {
+                    i++;
+                }
+
             }
 
             if (!moved && !possiblePositions.isEmpty()) {
 
                 int minDistanceIndex = -1;
-                int minDistance = INFINITE_COST.get();
+                int minDistance = INFINITE_COST;
                 int aux;
                 for (int k = 0; k < possiblePositions.size(); k++) {
                     aux = manhattanDistance(possiblePositions.get(k), to);
@@ -243,11 +269,11 @@ public class Heuristics {
 
         }
 
-        AtomicInteger minMoves = INFINITE_COST;
+        final int[] minMoves = {INFINITE_COST};
 
-        paths.forEach((direction, positions) -> minMoves.set(Math.min(minMoves.get(), positions.size() == 0 ? INFINITE_COST.get() : positions.size())));
+        paths.forEach((direction, positions) -> minMoves[0] = (Math.min(minMoves[0], positions.size() == 0 ? INFINITE_COST : positions.size())));
 
-        return minMoves.get();
+        return minMoves[0];
     }
 
 }
