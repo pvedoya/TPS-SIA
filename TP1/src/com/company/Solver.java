@@ -45,12 +45,87 @@ public class Solver {
             n=n.getParent();
         }
         Collections.reverse(moves);
+        System.out.println(moves.get(moves.size() -1));
     }
 
     private boolean solveIDAstar() {
-        System.out.println("IDAstrar");
-        return false;
+        System.out.println("IDAstar");
+        Node startNode = new Node(this.board, null, null);
+        RouteNode startRouteNode = new RouteNode(startNode, null, 0, heuristic(startNode));
+
+        int threshold = (int) heuristic(startNode);
+        while(true) {
+            RetIDAstar ret = searchIDAstar(startRouteNode,  threshold);
+            switch (ret.getSearchReturn()) {
+                case BOUND:
+                    threshold = ret.getHeuristic();
+                    break;
+                case FOUND:
+                    return true;
+                case NOT_FOUND:
+                    return false;
+            }
+        }
     }
+
+    private RetIDAstar searchIDAstar(RouteNode routeNode, int threshold) {
+        RetIDAstar ret = new RetIDAstar();
+
+        if(routeNode.getNode().isGoal()){
+            moves.add(routeNode.getNode());
+            ret.setSearchReturn(SEARCHRETURN.FOUND);
+            return ret;
+        }
+
+        int f = (int) routeNode.getTotalCost();
+        //si el f es mas grande que el threshold, return y poner el nuevo threshold
+        if(f > threshold) {
+            ret.setSearchReturn(SEARCHRETURN.BOUND);
+            ret.setHeuristic(f);
+            return ret;
+        }
+
+        int min = Integer.MAX_VALUE;
+        routeNode.getNode().generateOutcomes();
+
+        for(Node childNode : routeNode.getNode().getOutcomes()){
+            RouteNode childRouteNode = new RouteNode(childNode, routeNode.getNode(), routeNode.getRouteScore() + 1, heuristic(childNode));
+            RetIDAstar r = searchIDAstar(childRouteNode, threshold);
+
+            switch (r.getSearchReturn()) {
+                case BOUND:
+                    if(r.getHeuristic() < min) {
+                        min = r.getHeuristic();
+                    }
+                    break;
+                case FOUND:
+                    return r;
+                case NOT_FOUND:
+                    continue;
+            }
+
+        }
+
+        if(min == Integer.MAX_VALUE) {
+            ret.setSearchReturn(SEARCHRETURN.NOT_FOUND);
+        } else {
+            ret.setHeuristic(min);
+            ret.setSearchReturn(SEARCHRETURN.BOUND);
+        }
+        return ret;
+    }
+
+    private enum SEARCHRETURN { BOUND, FOUND, NOT_FOUND };
+
+    private static class RetIDAstar {
+        private SEARCHRETURN sr;
+        private int newHeuristic;
+        public SEARCHRETURN getSearchReturn() { return sr; }
+        public void setSearchReturn(SEARCHRETURN sr) { this.sr=sr; }
+        public void setHeuristic(int newHeuristic) { this.newHeuristic=newHeuristic; }
+        public int getHeuristic() { return newHeuristic; }
+    }
+
 
     private boolean solveAstar() {
         System.out.println("AStar");
@@ -74,7 +149,8 @@ public class Solver {
             currentRouteNode.getNode().generateOutcomes();
 
             for(Node childNode : currentRouteNode.getNode().getOutcomes()){
-                RouteNode childRouteNode = new RouteNode(childNode, currentRouteNode.getParent(), currentRouteNode.getRouteScore() + 1, heuristic(childNode));
+                //TODO CURRENTROUTENODE.GETPARENT?
+                RouteNode childRouteNode = new RouteNode(childNode, currentRouteNode.getNode(), currentRouteNode.getRouteScore() + 1, heuristic(childNode));
                 if(!explored.contains(childNode.getStringBoard()) && !frontier.contains(childRouteNode)){
                     frontier.add(childRouteNode);
                 } else if (frontier.contains(childRouteNode)) {
