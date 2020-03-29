@@ -50,11 +50,19 @@ public class Solution {
         }else{
             System.out.println("Solution found, copying data to solution.txt file on root folder");
             BufferedWriter writer = new BufferedWriter(new FileWriter("solution.txt"));
-            writer.write("Found a solution in " + depth + " moves, time taken: " + time + " ms\n");
+            writer.write("Input board:\n");
+            writeBoard(moves.get(0).getBoard(), writer);
+            writer.write("\nFound a solution in " + depth + " moves, time taken: " + time + " ms\n");
             writer.write("The cost for the algorithm used(" + algorithm + ") was " + cost + "\n");
             writer.write("Nodes explored: " + exploredQ + ", nodes in frontier: " + frontierQ + "\n");
             writer.write("\n");
-            writer.write("Printing steps...\n");
+            writer.write("Movements: \n");
+            for(Node node: moves){
+                if(node.getDirection() != null){
+                    writer.write(node.getDirection() + " ");
+                }
+            }
+            writer.write("\n\nGraphic Steps:\n");
 
             for(Node node: moves){
                 writeBoard(node.getBoard(), writer);

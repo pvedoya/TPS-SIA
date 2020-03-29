@@ -16,7 +16,6 @@ public class Main {
         Solver solver = new Solver(settings.getAlgorithm(), board);
         Solution solution = solver.generateSolution();
 
-//        solution.printSolution();
         try {
             solution.dumpToFile();
         } catch (IOException e) {
