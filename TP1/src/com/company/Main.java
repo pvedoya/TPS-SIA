@@ -2,6 +2,7 @@ package com.company;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
@@ -16,10 +17,10 @@ public class Main {
         Solver solver = new Solver(settings.getAlgorithm(), board);
         Solution solution = solver.generateSolution();
 
-        try {
-            solution.dumpToFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            solution.dumpToFile();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
 }

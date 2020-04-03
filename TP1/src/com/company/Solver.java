@@ -3,12 +3,14 @@ package com.company;
 import java.util.*;
 
 public class Solver {
-    private String algorithm;
-    private Board board;
     private ArrayList<Node> moves;
-    private int moveQ;
+    private Board board;
+
+    //solution data
+    private String algorithm;
     private int exploredQ;
     private int frontierQ;
+    private int moveQ;
     private long time;
     private int cost;
 
@@ -23,21 +25,23 @@ public class Solver {
         boolean found = false;
         switch(this.algorithm){
             case "DFS": found = solveDFS(); this.cost = 0; break;
-            case "BFS": found = solveBFS();this.cost = 0; break;
-            case "IDDFS": found = solveIDDFS();this.cost = 0; break;
-            case "GGS": found = solveGGS();break;
-            case "A*": found = solveAstar();break;
-            case "IDA*": found = solveIDAstar();break;
+            case "BFS": found = solveBFS(); this.cost = 0; break;
+            case "IDDFS": found = solveIDDFS(); this.cost = 0; break;
+            case "GGS": found = solveGGS(); break;
+            case "A*": found = solveAstar(); break;
+            case "IDA*": found = solveIDAstar(); break;
             default: break;
         }
         Solution solution = null;
         if(found){
+            System.out.println("BABADUKI");
             this.moveQ = 0;
             findPath();
             solution = new Solution(moves, moveQ, cost, exploredQ, frontierQ, time, algorithm);
         }
         return solution;
     }
+
     private void findPath(){
         Node n = moves.get(0);
         while(n.getParent() != null) {
@@ -45,12 +49,9 @@ public class Solver {
             moves.add(n.getParent());
             n = n.getParent();
         }
+        System.out.println("Solved in " + this.moveQ + " moves");
         Collections.reverse(moves);
     }
-
-
-
-
 
     private boolean solveIDAstar() {
         System.out.println("IDAstrar");
@@ -155,7 +156,6 @@ public class Solver {
         return false;
     }
 
-
     private boolean solveDFS(){
         long startTime = System.nanoTime();
 
@@ -221,6 +221,7 @@ public class Solver {
 
             for(Node n : node.getOutcomes()){
                 if(!explored.contains(n.getStringBoard()) && !frontier.contains(n) && !n.getBoard().hasBlocked()){
+
                     if(n.isGoal()){
                         long endTime = System.nanoTime();
                         this.time = (endTime - startTime)/1000000;
@@ -233,6 +234,7 @@ public class Solver {
                         return true;
                     }
                     frontier.add(n);
+                    n.getBoard().printBoard();
                 }
             }
         }

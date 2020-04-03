@@ -3,19 +3,23 @@ package com.company;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Objects;
+import java.util.Set;
 
 public class Node {
     private Board board;
+
     private String direction;
-    private HashSet<Node> outcomes;
     private String stringBoard;
+
+    private HashSet<Node> outcomes;
     private Node parent;
 
     public Node(Board board, String direction, Node parent){
         this.board = board.cloneBoard();
         this.direction = direction;
+        this.stringBoard = board.stringifyBoard();
+
         this.outcomes = new HashSet<>();
-        stringBoard = board.stringifyBoard();
         this.parent = parent;
     }
 
