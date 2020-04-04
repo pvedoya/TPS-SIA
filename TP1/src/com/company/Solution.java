@@ -30,7 +30,9 @@ public class Solution {
             System.out.println("Could not find a solution using " + algorithm);
         }else{
             System.out.println("Found a solution in " + depth + " moves, time taken: " + time + " ms");
-            System.out.println("The cost for the algorithm used(" + algorithm + ") was " + cost);
+            if(!algorithm.equals("DFS") && !algorithm.equals("BFS") && !algorithm.equals("IDDFS")){
+                System.out.println("The cost for the algorithm used(" + algorithm + ") was " + cost);
+            }
             System.out.println("Nodes explored: " + exploredQ + ", nodes in frontier: " + frontierQ);
             System.out.println("");
             System.out.println("Printing steps...");
@@ -53,7 +55,9 @@ public class Solution {
             writer.write("Input board:\n");
             writeBoard(moves.get(0).getBoard(), writer);
             writer.write("\nFound a solution in " + depth + " moves, time taken: " + time + " ms\n");
-            writer.write("The cost for the algorithm used(" + algorithm + ") was " + cost + "\n");
+            if(!algorithm.equals("DFS") && !algorithm.equals("BFS") && !algorithm.equals("IDDFS")){
+                writer.write("The cost for the algorithm used(" + algorithm + ") was " + cost + "\n");
+            }
             writer.write("Nodes explored: " + exploredQ + ", nodes in frontier: " + frontierQ + "\n");
             writer.write("\n");
             writer.write("Movements: \n");
