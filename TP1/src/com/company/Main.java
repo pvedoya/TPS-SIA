@@ -1,12 +1,11 @@
 package com.company;
 
 import java.io.File;
-import java.util.List;
+import java.io.IOException;
 
 public class Main {
-
     public static void main(String[] args) {
-        File readFile = new File("TP1/maps/" + args[0]);
+        File readFile = new File("maps/" + args[0]);
 
         Settings settings = new Settings();
         settings.loadSettings(readFile);
@@ -15,11 +14,12 @@ public class Main {
         board.validate();
 
         Solver solver = new Solver(settings.getAlgorithm(), board);
-        solver.generateSolution();
+        Solution solution = solver.generateSolution();
 
-//        List<Node> moves = solver.getMoves();
-//        for (Node n: moves) {
-//            n.getBoard().printBoard();
-//        }
+        try {
+            solution.dumpToFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
