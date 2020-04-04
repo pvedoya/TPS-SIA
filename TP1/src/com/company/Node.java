@@ -23,19 +23,19 @@ public class Node {
 
     public void generateOutcomes(){
         Board aux = this.board.cloneBoard();
-        if(aux.makeMove("UP")){
+        if(aux.makeMove("UP") && !aux.hasBlocked()){
             this.outcomes.add(new Node(aux,"UP", this));
         }
         aux = this.board.cloneBoard();
-        if(aux.makeMove("DOWN")){
+        if(aux.makeMove("DOWN")&& !aux.hasBlocked()){
             this.outcomes.add(new Node(aux,"DOWN", this));
         }
         aux = this.board.cloneBoard();
-        if(aux.makeMove("LEFT")){
+        if(aux.makeMove("LEFT")&& !aux.hasBlocked()){
             this.outcomes.add(new Node(aux,"LEFT", this));
         }
         aux = this.board.cloneBoard();
-        if(aux.makeMove("RIGHT")){
+        if(aux.makeMove("RIGHT")&& !aux.hasBlocked()){
             this.outcomes.add(new Node(aux,"RIGHT",this));
 
         }

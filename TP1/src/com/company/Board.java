@@ -282,6 +282,7 @@ public class Board implements Cloneable{
 
     public boolean hasBlocked() {
         char[][] aux = fullBoard();
+        
         int blocked = 0;
         for(int i = 0; i < this.height; i++){
             for(int j = 0;j < this.width; j++){

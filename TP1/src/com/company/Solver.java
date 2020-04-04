@@ -37,6 +37,7 @@ public class Solver {
             this.moveQ = 0;
             findPath();
             solution = new Solution(moves, moveQ, cost, exploredQ, frontierQ, time, algorithm);
+            System.out.println("FOUND");
         }
         return solution;
     }
