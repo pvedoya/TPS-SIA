@@ -374,4 +374,17 @@ public class Board implements Cloneable{
         return ret;
     }
 
+    @Override
+    public String toString(){
+        String ret = "";
+
+        for(int i = 0; i< this.height ; i++){
+            for(int j =0 ; j < this.width; j++){
+                ret += this.board[i][j];
+            }
+            ret+="\n";
+        }
+        return ret;
+    }
+
 }

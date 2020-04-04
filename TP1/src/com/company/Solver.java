@@ -139,7 +139,7 @@ public class Solver {
 
         while (!frontier.isEmpty()) {
             RouteNode currentRouteNode = frontier.poll(); //devuelve el nodo con menor costo por ser una priority queue
-
+            System.out.println(currentRouteNode.getNode().toString());
             if (currentRouteNode.getNode().isGoal()) {
                 moves.add(currentRouteNode.getNode());
                 return true;
@@ -162,10 +162,9 @@ public class Solver {
         return false;
     }
 
-    //todo
     private double heuristic(Node node) {
-        Heuristics h = new Heuristics();
-        return h.avrgManhattanDistance(node.getBoard());
+        return 1;
+        //return Heuristics.avrgManhattanDistance(node.getBoard());
     }
 
     private boolean solveGGS() {
