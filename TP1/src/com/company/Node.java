@@ -9,7 +9,6 @@ public class Node {
     private Board board;
 
     private String direction;
-    private String stringBoard;
 
     private HashSet<Node> outcomes;
     private Node parent;
@@ -17,7 +16,6 @@ public class Node {
     public Node(Board board, String direction, Node parent){
         this.board = board.cloneBoard();
         this.direction = direction;
-        this.stringBoard = board.stringifyBoard();
 
         this.outcomes = new HashSet<>();
         this.parent = parent;
@@ -26,19 +24,19 @@ public class Node {
     public void generateOutcomes(){
         Board aux = this.board.cloneBoard();
         if(aux.makeMove("UP")){
-            outcomes.add(new Node(aux,"UP", this));
+            this.outcomes.add(new Node(aux,"UP", this));
         }
         aux = this.board.cloneBoard();
         if(aux.makeMove("DOWN")){
-            outcomes.add(new Node(aux,"DOWN", this));
+            this.outcomes.add(new Node(aux,"DOWN", this));
         }
         aux = this.board.cloneBoard();
         if(aux.makeMove("LEFT")){
-            outcomes.add(new Node(aux,"LEFT", this));
+            this.outcomes.add(new Node(aux,"LEFT", this));
         }
         aux = this.board.cloneBoard();
         if(aux.makeMove("RIGHT")){
-            outcomes.add(new Node(aux,"RIGHT",this));
+            this.outcomes.add(new Node(aux,"RIGHT",this));
 
         }
     }
@@ -63,7 +61,7 @@ public class Node {
     }
 
     public String getStringBoard() {
-        return stringBoard;
+        return board.stringifyBoard();
     }
 
     public Node getParent() {
@@ -76,12 +74,12 @@ public class Node {
         if (o == null || getClass() != o.getClass()) return false;
         Node node = (Node) o;
         return  Objects.equals(direction, node.direction) &&
-                Objects.equals(stringBoard, node.stringBoard);
+                Objects.equals(getStringBoard(), node.getStringBoard());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(board, direction, outcomes, stringBoard);
+        return Objects.hash(board, direction, outcomes, getStringBoard());
     }
 
 }

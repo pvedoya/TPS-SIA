@@ -11,8 +11,8 @@ public class Board implements Cloneable{
     private int ballX;
     private int ballY;
 
-    private Set<Integer[]> goals;
-    private Set<Integer[]> boxes;
+    private HashSet<Integer[]> goals;
+    private HashSet<Integer[]> boxes;
 
     public Board(int width, int height, char[][] board) {
         this.width = width;
@@ -20,6 +20,14 @@ public class Board implements Cloneable{
         this.board = board;
         this.goals = new HashSet<>();
         this.boxes = new HashSet<>();
+    }
+
+    public Board(int width, int height, char[][] board, HashSet<Integer[]> goals,HashSet<Integer[]> boxes ){
+        this.width = width;
+        this.height = height;
+        this.board = board;
+        this.goals = goals;
+        this.boxes = new HashSet<>(boxes);
     }
 
     public int getWidth() {
@@ -266,10 +274,7 @@ public class Board implements Cloneable{
     }
 
     public Board cloneBoard() {
-        Board clone = new Board(this.width, this.height, this.board);
-
-        clone.goals = this.goals;
-        clone.boxes = new HashSet<>(this.boxes);
+        Board clone = new Board(this.width, this.height, this.board, this.goals, this.boxes);
 
         clone.setBall(this.ballX,this.ballY);
         return clone;

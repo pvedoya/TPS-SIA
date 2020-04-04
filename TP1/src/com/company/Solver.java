@@ -34,7 +34,6 @@ public class Solver {
         }
         Solution solution = null;
         if(found){
-            System.out.println("BABADUKI");
             this.moveQ = 0;
             findPath();
             solution = new Solution(moves, moveQ, cost, exploredQ, frontierQ, time, algorithm);
@@ -215,7 +214,7 @@ public class Solver {
 
         while(!frontier.isEmpty()){
             node = frontier.poll();
-
+            node.getBoard().printBoard();
             explored.add(node.getStringBoard());
             node.generateOutcomes();
 
@@ -234,11 +233,9 @@ public class Solver {
                         return true;
                     }
                     frontier.add(n);
-                    n.getBoard().printBoard();
                 }
             }
         }
-
         return false;
     }
 
