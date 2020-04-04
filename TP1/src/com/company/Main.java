@@ -5,7 +5,7 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) {
-        File readFile = new File("maps/" + args[0]);
+        File readFile = new File("TP1/maps/" + args[0]);
 
         Settings settings = new Settings();
         settings.loadSettings(readFile);
@@ -16,10 +16,10 @@ public class Main {
         Solver solver = new Solver(settings.getAlgorithm(), board);
         Solution solution = solver.generateSolution();
 
-        try {
-            solution.dumpToFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            solution.dumpToFile();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
 }

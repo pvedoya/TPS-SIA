@@ -31,6 +31,7 @@ public class Solver {
             default: break;
         }
         Solution solution = null;
+        System.out.println(found);
         if(found){
             this.moveQ = 0;
             findPath();
@@ -48,9 +49,6 @@ public class Solver {
         Collections.reverse(moves);
         System.out.println(moves.get(moves.size() -1));
     }
-
-
-
 
 
     private boolean solveIDAstar() {
@@ -144,7 +142,7 @@ public class Solver {
 
         while (!frontier.isEmpty()) {
             RouteNode currentRouteNode = frontier.poll(); //devuelve el nodo con menor costo por ser una priority queue
-            System.out.println(currentRouteNode.getNode().toString());
+            //System.out.println(currentRouteNode.getNode().toString());
             if (currentRouteNode.getNode().isGoal()) {
                 moves.add(currentRouteNode.getNode());
                 return true;
@@ -168,8 +166,10 @@ public class Solver {
     }
 
     private double heuristic(Node node) {
-        return 1;
+        //return 1;
         //return Heuristics.avrgManhattanDistance(node.getBoard());
+        return Heuristics.minimumMatchingLowerBound(node.getBoard());
+        //return Heuristics.simpleLowerBound(node.getBoard());
     }
 
     private boolean solveGGS() {
