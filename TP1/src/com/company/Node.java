@@ -1,19 +1,20 @@
 package com.company;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Objects;
 
 public class Node {
     private Board board;
     private String direction;
-    private LinkedList<Node> outcomes;
+    private HashSet<Node> outcomes;
     private String stringBoard;
     private Node parent;
 
     public Node(Board board, String direction, Node parent){
         this.board = board.cloneBoard();
         this.direction = direction;
-        this.outcomes = new LinkedList<>();
+        this.outcomes = new HashSet<>();
         stringBoard = board.stringifyBoard();
         this.parent = parent;
     }
@@ -34,6 +35,7 @@ public class Node {
         aux = this.board.cloneBoard();
         if(aux.makeMove("RIGHT")){
             outcomes.add(new Node(aux,"RIGHT",this));
+
         }
     }
 
@@ -48,7 +50,7 @@ public class Node {
         return this.board;
     }
 
-    public LinkedList<Node> getOutcomes(){
+    public HashSet<Node> getOutcomes(){
         return outcomes;
     }
 
@@ -77,4 +79,5 @@ public class Node {
     public int hashCode() {
         return Objects.hash(board, direction, outcomes, stringBoard);
     }
+
 }

@@ -1,10 +1,9 @@
 package com.company;
 
 import java.io.File;
-import java.util.List;
+import java.io.IOException;
 
 public class Main {
-
     public static void main(String[] args) {
         File readFile = new File("maps/" + args[0]);
 
@@ -14,13 +13,13 @@ public class Main {
         Board board = new Board(settings.getWidth(),settings.getHeight(),settings.getBoard());
         board.validate();
 
-
         Solver solver = new Solver(settings.getAlgorithm(), board);
-        solver.generateSolution();
+        Solution solution = solver.generateSolution();
 
-        List<Node> moves = solver.getMoves();
-        for (Node n: moves) {
-            n.getBoard().printBoard();
+        try {
+            solution.dumpToFile();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
