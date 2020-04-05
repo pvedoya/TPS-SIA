@@ -148,72 +148,46 @@ public class Solver {
         public int getHeuristic() { return newHeuristic; }
     }
 
-//    private boolean solveAstar() {
-//        System.out.println("AStar");
-//        Node startNode = new Node(this.board, null,  0);
-//        startNode.setTotalCost(startNode.getPathCost() + heuristic(startNode.getBoard()));
-//        Queue<RouteNode> frontier = new PriorityQueue<>();
-//
-//
-//        Set<String> explored = new HashSet<>();
-//
-//        frontier.add(startRouteNode);
-//
-//        while (!frontier.isEmpty()) {
-//            RouteNode currentRouteNode = frontier.poll(); //devuelve el nodo con menor costo por ser una priority queue
-//            //System.out.println(currentRouteNode.getNode().toString());
-//            if (currentRouteNode.getNode().isGoal()) {
-//                moves.add(currentRouteNode.getNode());
-//                return true;
-//            }
-//
-//            explored.add(currentRouteNode.getNode().getStringBoard());
-//            currentRouteNode.getNode().generateOutcomes();
-//
-//            for(Node childNode : currentRouteNode.getNode().getOutcomes()){
-//                //TODO CURRENTROUTENODE.GETPARENT?
-//                RouteNode childRouteNode = new RouteNode(childNode, currentRouteNode.getNode(), currentRouteNode.getRouteScore() + 1, heuristic(childNode));
-//                if(!explored.contains(childNode.getStringBoard()) && !frontier.contains(childRouteNode)){
-//                    frontier.add(childRouteNode);
-//                } else if (frontier.contains(childRouteNode)) {
-//                    frontier.remove(childRouteNode);
-//                    frontier.add(childRouteNode);
-//                }
-//            }
-//        }
-//        return false;
-//    }
-
-
     private boolean solveAstar() {
         System.out.println("AStar");
-        Node startNode = new Node(this.board, null, null);
-        RouteNode startRouteNode = new RouteNode(startNode, null, 0, heuristic(startNode.getBoard()));
-
-        Queue<RouteNode> frontier = new PriorityQueue<>();
-        Set<String> explored = new HashSet<>();
-
-        frontier.add(startRouteNode);
+        Node startNode = new Node(this.board, null, null,  0);
+        startNode.setTotalCost(startNode.getPathCost() + heuristic(startNode.getBoard()));
+        Queue<Node> frontier = new PriorityQueue<>(); //todo chequear q este bien el compareto
+        frontier.add(startNode);
+        Set<Board> explored = new HashSet<>();
 
         while (!frontier.isEmpty()) {
-            RouteNode currentRouteNode = frontier.poll(); //devuelve el nodo con menor costo por ser una priority queue
-            //System.out.println(currentRouteNode.getNode().toString());
-            if (currentRouteNode.getNode().isGoal()) {
-                moves.add(currentRouteNode.getNode());
+            Node currentNode = frontier.poll(); //devuelve el nodo con menor costo por ser una priority queue
+            if (currentNode.isGoal()) {
+                moves.add(currentNode);
                 return true;
             }
-
-            explored.add(currentRouteNode.getNode().getStringBoard());
-            currentRouteNode.getNode().generateOutcomes();
-
-            for(Node childNode : currentRouteNode.getNode().getOutcomes()){
-                //TODO CURRENTROUTENODE.GETPARENT?
-                RouteNode childRouteNode = new RouteNode(childNode, currentRouteNode.getNode(), currentRouteNode.getRouteScore() + 1, heuristic(childNode.getBoard()));
-                if(!explored.contains(childNode.getStringBoard()) && !frontier.contains(childRouteNode)){
-                    frontier.add(childRouteNode);
-                } else if (frontier.contains(childRouteNode)) {
-                    frontier.remove(childRouteNode);
-                    frontier.add(childRouteNode);
+            explored.add(currentNode.getBoard());
+            currentNode.generateWeightedOutcomes();
+//            List<Node> outcomes = currentNode.getOutcomes();
+            for(Node childNode : currentNode.getOutcomes()){
+                childNode.setTotalCost(childNode.getPathCost() + heuristic(childNode.getBoard()));
+                if(!explored.contains(childNode.getBoard())){
+                    boolean exists = false;
+                    for(Node n : frontier) {
+                        if(childNode.getBoard().equals(n.getBoard())) {
+                            exists = true;
+                            break;
+                        }
+                    }
+                    if(!exists) {
+                        frontier.add(childNode);
+                    }
+                } else {
+                    for(Node n : frontier) {
+                        if(childNode.getBoard().equals(n.getBoard())) {
+                            if(n.getTotalCost() > childNode.getTotalCost()) {
+                                frontier.remove(n);
+                                frontier.add(childNode);
+                                break;
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -232,38 +206,50 @@ public class Solver {
     }
 
     private boolean solveGGS() {
-        System.out.println("GGs");
-        Node startNode = new Node(this.board, null, null);
-        RouteNode startRouteNode = new RouteNode(startNode, null, 0, heuristic(startNode.getBoard()));
-
-        Queue<RouteNode> frontier = new PriorityQueue<>();
-        Set<String> explored = new HashSet<>();
-
-        frontier.add(startRouteNode);
+        System.out.println("GGS");
+        Node startNode = new Node(this.board, null, null,  0);
+        startNode.setTotalCost(startNode.getPathCost() + heuristic(startNode.getBoard()));
+        Queue<Node> frontier = new PriorityQueue<>(); //todo chequear q este bien el compareto
+        frontier.add(startNode);
+        Set<Board> explored = new HashSet<>();
 
         while (!frontier.isEmpty()) {
-            RouteNode currentRouteNode = frontier.poll(); //devuelve el nodo con menor costo por ser una priority queue
-
-            if (currentRouteNode.getNode().isGoal()) {
-                moves.add(currentRouteNode.getNode());
+            Node currentNode = frontier.poll(); //devuelve el nodo con menor costo por ser una priority queue
+            if (currentNode.isGoal()) {
+                moves.add(currentNode);
                 return true;
             }
-
-            explored.add(currentRouteNode.getNode().getStringBoard());
-            currentRouteNode.getNode().generateOutcomes();
-
-            for(Node childNode : currentRouteNode.getNode().getOutcomes()){
-                //TODO CURRENTROUTENODE.GETPARENT?
-                RouteNode childRouteNode = new RouteNode(childNode, currentRouteNode.getNode(), 0, heuristic(childNode.getBoard()));
-                if(!explored.contains(childNode.getStringBoard()) && !frontier.contains(childRouteNode)){
-                    frontier.add(childRouteNode);
-                } else if (frontier.contains(childRouteNode)) {
-                    frontier.remove(childRouteNode);
-                    frontier.add(childRouteNode);
+            explored.add(currentNode.getBoard());
+            currentNode.generateWeightedOutcomes();
+//            List<Node> outcomes = currentNode.getOutcomes();
+            for(Node childNode : currentNode.getOutcomes()){
+                childNode.setTotalCost(childNode.getPathCost() + heuristic(childNode.getBoard()));
+                if(!explored.contains(childNode.getBoard())){
+                    boolean exists = false;
+                    for(Node n : frontier) {
+                        if(childNode.getBoard().equals(n.getBoard())) {
+                            exists = true;
+                            break;
+                        }
+                    }
+                    if(!exists) {
+                        frontier.add(childNode);
+                    }
+                } else {
+                    for(Node n : frontier) {
+                        if(childNode.getBoard().equals(n.getBoard())) {
+                            if(n.getTotalCost() > childNode.getTotalCost()) {
+                                frontier.remove(n);
+                                frontier.add(childNode);
+                                break;
+                            }
+                        }
+                    }
                 }
             }
         }
         return false;
+
     }
 
 

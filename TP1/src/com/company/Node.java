@@ -1,13 +1,11 @@
 package com.company;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Objects;
+import java.util.*;
 
 public class  Node implements Comparable<Node> {
     private Board board;
     private String direction;
-    private HashSet<Node> outcomes;
+    private List<Node> outcomes;
     private String stringBoard;
     private Node parent;
     private int pathCost;
@@ -16,17 +14,18 @@ public class  Node implements Comparable<Node> {
     public Node(Board board, String direction, Node parent){
         this.board = board.cloneBoard();
         this.direction = direction;
-        this.outcomes = new HashSet<>();
+        this.outcomes = new ArrayList<>();
         this.stringBoard = board.stringifyBoard();
         this.parent = parent;
     }
 
-    public Node(Board board, Node parent, int pathCost){
+    public Node(Board board, String direction, Node parent, int pathCost){
         this.board = board.cloneBoard();
-        this.outcomes = new HashSet<>();
+        this.outcomes = new ArrayList<>();
         this.parent = parent;
         this.pathCost = pathCost;
         this.totalCost = 0;
+        this.direction = direction;
     }
 
     /*
@@ -54,6 +53,26 @@ public class  Node implements Comparable<Node> {
         }
     }
 
+    public void generateWeightedOutcomes(){
+        Board aux = this.board.cloneBoard();
+        if(aux.makeMove("UP") && !aux.hasBlocked()){
+            outcomes.add(new Node(aux,"UP", this, this.pathCost + 1));
+        }
+        aux = this.board.cloneBoard();
+        if(aux.makeMove("DOWN") && !aux.hasBlocked()){
+            outcomes.add(new Node(aux,"DOWN", this, this.pathCost + 1));
+        }
+        aux = this.board.cloneBoard();
+        if(aux.makeMove("LEFT") && !aux.hasBlocked()){
+            outcomes.add(new Node(aux,"LEFT", this, this.pathCost + 1));
+        }
+        aux = this.board.cloneBoard();
+        if(aux.makeMove("RIGHT") && !aux.hasBlocked()){
+            outcomes.add(new Node(aux,"RIGHT",this, this.pathCost + 1));
+
+        }
+    }
+
     public boolean isGoal(){
         if(this.board.hasWon()){
             return true;
@@ -67,7 +86,7 @@ public class  Node implements Comparable<Node> {
         return this.board;
     }
 
-    public HashSet<Node> getOutcomes(){
+    public List<Node> getOutcomes(){
         return outcomes;
     }
 
@@ -106,8 +125,9 @@ public class  Node implements Comparable<Node> {
 
     @Override
     public int compareTo(Node node) {
-
-        return 0;
+        Double d1 = totalCost;
+        Double d2 = node.totalCost;
+        return d1.compareTo(d2);
     }
 
     public int getPathCost() {
