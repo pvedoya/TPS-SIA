@@ -11,13 +11,13 @@ public class Board implements Cloneable{
     private int ballX;
     private int ballY;
 
-    private Set<Integer[]> goals;
+    private ArrayList<Integer[]> goals;
 
     public Board(int width, int height, char[][] board) {
         this.width = width;
         this.height = height;
         this.board = board;
-        this.goals = new HashSet<>();
+        this.goals = new ArrayList<>();
     }
 
     public int getWidth() {
@@ -47,6 +47,10 @@ public class Board implements Cloneable{
     public void setBall(int x, int y){
         this.ballX = x;
         this.ballY = y;
+    }
+
+    public ArrayList<Integer[]> getGoals () {
+        return goals;
     }
 
     public void validate(){
