@@ -2,10 +2,16 @@ package com.company;
 
 import java.util.*;
 
+/*
+* Clase que recibe un nombre de algoritmo (y uno de heuristica de ser necesaria) y un tablero, y encuentra la solucion correspondiente
+* */
+
 public class Solver {
     private String algorithm;
+    private String heuristic;
     private Board board;
     private ArrayList<Node> moves;
+
     private int moveQ;
     private int exploredQ;
     private int frontierQ;
@@ -13,13 +19,18 @@ public class Solver {
     private int cost;
 
 
-    public Solver(String algorithm,Board board){
+    public Solver(String algorithm,String heuristic,Board board){
         this.algorithm = algorithm;
+        this.heuristic = heuristic;
         this.board = board;
         this.moves = new ArrayList<>();
     }
 
-    public Solution generateSolution(){
+    /*
+    * LLama al metodo correspondiente al algoritmo, y si encuentra una solucion, crea y retorna una solucion con esa informacion
+    * */
+
+    public Solution generateSolution() throws OutOfMemoryError {
         boolean found = false;
         switch(this.algorithm){
             case "DFS": found = solveDFS(); this.cost = 0; break;
@@ -30,6 +41,7 @@ public class Solver {
             case "IDA*": found = solveIDAstar();break;
             default: break;
         }
+
         Solution solution = null;
         System.out.println(found);
         if(found){
@@ -39,17 +51,24 @@ public class Solver {
         }
         return solution;
     }
+
+    /*
+    * Usa una lista con solamente el ultimo nodo para encotrar un camino a la raiz, agregando los nodos intermedio
+    * a la lista. Tambien suma al contador de movimientos
+    * */
+
     private void findPath(){
         Node n = moves.get(0);
+        n.getBoard().fullboard();
         while(n.getParent() != null) {
             this.moveQ++;
             moves.add(n.getParent());
             n = n.getParent();
+            n.getBoard().fullboard();
         }
         Collections.reverse(moves);
         System.out.println(moves.get(moves.size() -1));
     }
-
 
     private boolean solveIDAstar() {
         System.out.println("IDAstar");
@@ -167,9 +186,13 @@ public class Solver {
 
     private double heuristic(Node node) {
         //return 1;
-        //return Heuristics.avrgManhattanDistance(node.getBoard());
-        return Heuristics.minimumMatchingLowerBound(node.getBoard());
-        //return Heuristics.simpleLowerBound(node.getBoard());
+        if(this.heuristic.equals("MANHATTAN")){
+            return Heuristics.avrgManhattanDistance(node.getBoard());
+        }else if (this.heuristic.equals("MMLB")){
+            return Heuristics.minimumMatchingLowerBound(node.getBoard());
+        }else{
+            return Heuristics.simpleLowerBound(node.getBoard());
+        }
     }
 
     private boolean solveGGS() {
@@ -344,9 +367,5 @@ public class Solver {
         }
 
         return false;
-    }
-
-    public ArrayList<Node> getMoves() {
-        return moves;
     }
 }

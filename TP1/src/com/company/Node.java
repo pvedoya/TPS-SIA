@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Objects;
 
-public class Node {
+public class  Node {
     private Board board;
     private String direction;
     private HashSet<Node> outcomes;
@@ -19,21 +19,26 @@ public class Node {
         this.parent = parent;
     }
 
+    /*
+    * Crea los nodos hijos con los movimientos posibles desde el tablero actual, creando nuevas instancias
+    * del tablero y aplicando el movimiento, si el tablero se bloquea(no se puede mover ninguna caja), se ingora el hijo
+    * */
+
     public void generateOutcomes(){
         Board aux = this.board.cloneBoard();
-        if(aux.makeMove("UP")){
+        if(aux.makeMove("UP") && !aux.hasBlocked()){
             outcomes.add(new Node(aux,"UP", this));
         }
         aux = this.board.cloneBoard();
-        if(aux.makeMove("DOWN")){
+        if(aux.makeMove("DOWN") && !aux.hasBlocked()){
             outcomes.add(new Node(aux,"DOWN", this));
         }
         aux = this.board.cloneBoard();
-        if(aux.makeMove("LEFT")){
+        if(aux.makeMove("LEFT") && !aux.hasBlocked()){
             outcomes.add(new Node(aux,"LEFT", this));
         }
         aux = this.board.cloneBoard();
-        if(aux.makeMove("RIGHT")){
+        if(aux.makeMove("RIGHT") && !aux.hasBlocked()){
             outcomes.add(new Node(aux,"RIGHT",this));
 
         }
@@ -45,6 +50,8 @@ public class Node {
         }
         return false;
     }
+
+    //Getters & Setters
 
     public Board getBoard(){
         return this.board;
@@ -65,6 +72,8 @@ public class Node {
     public Node getParent() {
         return parent;
     }
+
+    //Utils
 
     @Override
     public boolean equals(Object o) {

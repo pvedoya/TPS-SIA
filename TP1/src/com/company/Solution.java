@@ -1,8 +1,13 @@
 package com.company;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+
+/*
+* Clase que guarda y exporta la solucion al tablero con el algoritmo seleccionado
+* */
 
 public class Solution {
     private ArrayList<Node> moves;
@@ -22,25 +27,6 @@ public class Solution {
         this.frontierQ = frontierQ;
         this.time = time;
         this.algorithm = algorithm;
-    }
-
-    public void printSolution(){
-        System.out.println("");
-        if (moves.isEmpty()) {
-            System.out.println("Could not find a solution using " + algorithm);
-        }else{
-            System.out.println("Found a solution in " + depth + " moves, time taken: " + time + " ms");
-            if(!algorithm.equals("DFS") && !algorithm.equals("BFS") && !algorithm.equals("IDDFS")){
-                System.out.println("The cost for the algorithm used(" + algorithm + ") was " + cost);
-            }
-            System.out.println("Nodes explored: " + exploredQ + ", nodes in frontier: " + frontierQ);
-            System.out.println("");
-            System.out.println("Printing steps...");
-            for(Node node: moves){
-                node.getBoard().printBoard();
-                System.out.println("");
-            }
-        }
     }
 
     public void dumpToFile() throws IOException {
@@ -76,6 +62,10 @@ public class Solution {
             writer.close();
         }
     }
+
+    /*
+    * Exporta el tablero linea a linea
+    * */
 
     private void writeBoard(Board board, BufferedWriter writer) throws IOException {
         for(int i = 0; i < board.getHeight(); i++){
