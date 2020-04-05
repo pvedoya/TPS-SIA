@@ -2,6 +2,11 @@ package com.company;
 
 import java.util.*;
 
+/*
+* La clase board guarda una instancia del tablero en matriz de char, para tener una rapida lectura e impresion, guarda las dimensiones del tablero
+* la ubicacion de la pelota y de los objetivos
+* */
+
 public class Board implements Cloneable{
     private int width;
     private int height;
@@ -20,24 +25,14 @@ public class Board implements Cloneable{
         this.goals = new ArrayList<>();
     }
 
+    //Getters & Setters
+
     public int getWidth() {
         return width;
     }
 
-    public void setWidth(int width) {
-        this.width = width;
-    }
-
     public int getHeight() {
         return height;
-    }
-
-    public void setHeight(int height) {
-        this.height = height;
-    }
-
-    public void setBoard(char[][] board){
-        this.board = board;
     }
 
     public char[][] getBoard(){
@@ -52,6 +47,10 @@ public class Board implements Cloneable{
     public ArrayList<Integer[]> getGoals () {
         return goals;
     }
+
+    /*
+    * Metodo que llama a los metodos para detectar si las piezas y las paredes son correctas, en caso de no ser correctas corta la ejecucion del programa
+    * */
 
     public void validate(){
         boolean valid = true;
@@ -70,6 +69,11 @@ public class Board implements Cloneable{
             System.out.println("Correct board format detected, starting to find a solution...");
         }
     }
+
+    /*
+    * Medodo que asegura que haya la misma cantidad de objetivos que cajas, y que solo haya una pelota, cambia '*' y '+' por '$' y '@'
+    * ademas se encarga de agregar las coordenadas de las cajas al set correspondiente, y marca las coordenadas de la pelota
+    * */
 
     private boolean validPieces(){
         int goalCounter = 0;
@@ -112,15 +116,14 @@ public class Board implements Cloneable{
         return true;
     }
 
+    /*
+    * Utiliza DFS para asegurar que existe una pared que rodea al tablero, arrancando del primer segmento que encuentra,
+    * verificando para arriba, abajo, izquierda y derecha si hay segmentos continuos, hasta volver al origen
+    * */
+
     private boolean validWalls(){
-        Set<Integer[]> visited = new TreeSet<>(new Comparator<Integer[]>() {
-            @Override
-            public int compare(Integer[] array1, Integer[] array2) {
-                return Integer.compare(array1[0],array2[0]) + Integer.compare(array1[1], array2[1]);
-            }
-        });
+        Set<Integer[]> visited = new TreeSet<>((array1, array2) -> Math.abs(Integer.compare(array1[0], array2[0])) + Math.abs(Integer.compare(array1[1], array2[1])));
         Stack<Integer[]> stack = new Stack<>();
-        boolean closed = false;
 
         for(int i = 0; i < this.height; i++){
             for(int j = 0; j < this.width; j++){
@@ -138,10 +141,39 @@ public class Board implements Cloneable{
         }
 
         Integer[] current = first.clone();
-        stack.push(current);
         int minI, minJ, maxI, maxJ;
 
-        while(!closed){
+        minI = Math.max(0, current[0]-1);
+        minJ = Math.max(0, current[1]-1);
+        maxI = Math.min(this.height-1, current[0]+1);
+        maxJ = Math.min(this.width-1, current[1]+1);
+
+        visited.add(current);
+
+        if(current[0] - 1 >= minI){
+            if(this.board[current[0]-1][current[1]] == SquareType.WALL.getIcon()){
+                Integer[] aux = {current[0]-1, current[1]};
+                stack.push(aux);
+            }
+        }else if(current[0] + 1 <= maxI) {
+            if (this.board[current[0] + 1][current[1]] == SquareType.WALL.getIcon()) {
+                Integer[] aux = {current[0] + 1, current[1]};
+                stack.push(aux);
+            }
+        }else if(current[1] - 1 >= minJ){
+            if(this.board[current[0]][current[1]-1] == SquareType.WALL.getIcon()){
+                Integer[] aux = {current[0], current[1]-1};
+                stack.push(aux);
+            }
+        }else if(current[1] + 1 <= maxJ){
+            if(this.board[current[0]][current[1]+1] == SquareType.WALL.getIcon()){
+                Integer[] aux = {current[0], current[1]+1};
+                stack.push(aux);
+            }
+        }
+
+        while(!stack.empty()){
+
             current = stack.pop();
             visited.add(current);
 
@@ -201,6 +233,24 @@ public class Board implements Cloneable{
         return false;
     }
 
+    /*
+    * Agrega los BOXGOALS y BALLGOALS al tablero, reemplazandolos donde corresponde, metodo hecho para preparar el tablero para mostrar al usuario
+    * */
+
+    public void fullboard(){
+        for(Integer[] i : this.goals){
+            if(board[i[0]][i[1]] == SquareType.BOX.getIcon()){
+                board[i[0]][i[1]] = SquareType.BOXGOAL.getIcon();
+            }else if(board[i[0]][i[1]] == SquareType.BALL.getIcon()){
+                board[i[0]][i[1]] = SquareType.BALLGOAL.getIcon();
+            }
+        }
+    }
+
+    /*
+    * Metodo que verifica que todas las cajas hayan encontrado un objetivo
+    * */
+
     public boolean hasWon(){
         int freeBoxes = 0;
         for(int i = 0; i < this.height; i++){
@@ -243,6 +293,21 @@ public class Board implements Cloneable{
         return clone;
     }
 
+    private boolean isGoal(int i, int j){
+        for (Integer[] pair: this.goals) {
+            if(pair[0] == i && pair[1] == j){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /*
+    * Metodo que verifica que haya por lo menos una caja libre, buscando caja por caja y fijandose que no este en una esquina, una esquina es la situacion
+    * donde para dos direcciones continuas a una caja(ARRIBA y DERECHA, ARRIBA e IZQUIERDA, IZQUIERDA y ABAJO, ABAJO y DERECHA) hay un objeto no movible,
+    * que puede ser una pared, o una caja, ya que una caja no puede empujar a otra.
+    * */
+
     public boolean hasBlocked() {
         int blocked = 0;
         for(int i = 0; i < this.height; i++){
@@ -264,14 +329,11 @@ public class Board implements Cloneable{
         return blocked == this.goals.size();
     }
 
-    private boolean isGoal(int i, int j){
-        for (Integer[] pair: this.goals) {
-            if(pair[0] == i && pair[1] == j){
-                return true;
-            }
-        }
-        return false;
-    }
+    /*
+    * Metodo que recibe una direccion, y verifica que desde la actual ubicacion de la bola se pueda hacer la jugada, si se puede hacer se realiza.
+    * Para la verificacion, evalua si puede moverse al casillero contiguo, y si hay una caja se fija si puede moverla al espacio siguiente. Una vez que realiza
+    * el movimiento, actualiza los casilleros utilizados con las figuras correspondientes y retorna verdadero.
+    * */
 
     public boolean makeMove(String direction){
         if(direction.equals("UP")){
@@ -366,6 +428,11 @@ public class Board implements Cloneable{
 
     }
 
+    /*
+    * Retorna un String conteniendo todas las piezas del tablero en su orden correspondiente, esto es una representacion del estado en el cual esta el tablero,
+    * ya que al mover una pieza cambia este String
+    * */
+
     public String stringifyBoard(){
         String ret = "";
 
@@ -373,6 +440,21 @@ public class Board implements Cloneable{
             for(int j =0 ; j < this.width; j++){
                 ret += this.board[i][j];
             }
+        }
+        return ret;
+    }
+
+    //Utils
+
+    @Override
+    public String toString(){
+        String ret = "";
+
+        for(int i = 0; i< this.height ; i++){
+            for(int j =0 ; j < this.width; j++){
+                ret += this.board[i][j];
+            }
+            ret+="\n";
         }
         return ret;
     }

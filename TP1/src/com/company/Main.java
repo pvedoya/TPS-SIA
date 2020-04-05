@@ -13,12 +13,14 @@ public class Main {
         Board board = new Board(settings.getWidth(),settings.getHeight(),settings.getBoard());
         board.validate();
 
-        Solver solver = new Solver(settings.getAlgorithm(), board);
-        Solution solution = solver.generateSolution();
+        Solver solver = new Solver(settings.getAlgorithm(), settings.getHeuristic(), board);
 
         try {
+            Solution solution = solver.generateSolution();
             solution.dumpToFile();
         } catch (IOException e) {
+            e.printStackTrace();
+        }catch(OutOfMemoryError e){
             e.printStackTrace();
         }
     }
