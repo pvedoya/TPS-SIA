@@ -4,12 +4,14 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Objects;
 
-public class  Node {
+public class  Node implements Comparable<Node> {
     private Board board;
     private String direction;
     private HashSet<Node> outcomes;
     private String stringBoard;
     private Node parent;
+    private int pathCost;
+    private double totalCost;
 
     public Node(Board board, String direction, Node parent){
         this.board = board.cloneBoard();
@@ -17,6 +19,14 @@ public class  Node {
         this.outcomes = new HashSet<>();
         stringBoard = board.stringifyBoard();
         this.parent = parent;
+    }
+
+    public Node(Board board, Node parent, int pathCost){
+        this.board = board.cloneBoard();
+        this.outcomes = new HashSet<>();
+        this.parent = parent;
+        this.pathCost = pathCost;
+        this.totalCost = 0;
     }
 
     /*
@@ -94,4 +104,25 @@ public class  Node {
         return Objects.hash(board, direction, outcomes, stringBoard);
     }
 
+    @Override
+    public int compareTo(Node node) {
+        
+        return 0;
+    }
+
+    public int getPathCost() {
+        return pathCost;
+    }
+
+    public void setPathCost(int pathCost) {
+        this.pathCost = pathCost;
+    }
+
+    public double getTotalCost() {
+        return totalCost;
+    }
+
+    public void setTotalCost(double totalCost) {
+        this.totalCost = totalCost;
+    }
 }

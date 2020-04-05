@@ -73,9 +73,9 @@ public class Solver {
     private boolean solveIDAstar() {
         System.out.println("IDAstar");
         Node startNode = new Node(this.board, null, null);
-        RouteNode startRouteNode = new RouteNode(startNode, null, 0, heuristic(startNode));
+        RouteNode startRouteNode = new RouteNode(startNode, null, 0, heuristic(startNode.getBoard()));
 
-        int threshold = (int) heuristic(startNode);
+        int threshold = (int) heuristic(startNode.getBoard());
         while(true) {
             RetIDAstar ret = searchIDAstar(startRouteNode,  threshold);
             switch (ret.getSearchReturn()) {
@@ -111,7 +111,7 @@ public class Solver {
         routeNode.getNode().generateOutcomes();
 
         for(Node childNode : routeNode.getNode().getOutcomes()){
-            RouteNode childRouteNode = new RouteNode(childNode, routeNode.getNode(), routeNode.getRouteScore() + 1, heuristic(childNode));
+            RouteNode childRouteNode = new RouteNode(childNode, routeNode.getNode(), routeNode.getRouteScore() + 1, heuristic(childNode.getBoard()));
             RetIDAstar r = searchIDAstar(childRouteNode, threshold);
 
             switch (r.getSearchReturn()) {
@@ -148,11 +148,47 @@ public class Solver {
         public int getHeuristic() { return newHeuristic; }
     }
 
+//    private boolean solveAstar() {
+//        System.out.println("AStar");
+//        Node startNode = new Node(this.board, null,  0);
+//        startNode.setTotalCost(startNode.getPathCost() + heuristic(startNode.getBoard()));
+//        Queue<RouteNode> frontier = new PriorityQueue<>();
+//
+//
+//        Set<String> explored = new HashSet<>();
+//
+//        frontier.add(startRouteNode);
+//
+//        while (!frontier.isEmpty()) {
+//            RouteNode currentRouteNode = frontier.poll(); //devuelve el nodo con menor costo por ser una priority queue
+//            //System.out.println(currentRouteNode.getNode().toString());
+//            if (currentRouteNode.getNode().isGoal()) {
+//                moves.add(currentRouteNode.getNode());
+//                return true;
+//            }
+//
+//            explored.add(currentRouteNode.getNode().getStringBoard());
+//            currentRouteNode.getNode().generateOutcomes();
+//
+//            for(Node childNode : currentRouteNode.getNode().getOutcomes()){
+//                //TODO CURRENTROUTENODE.GETPARENT?
+//                RouteNode childRouteNode = new RouteNode(childNode, currentRouteNode.getNode(), currentRouteNode.getRouteScore() + 1, heuristic(childNode));
+//                if(!explored.contains(childNode.getStringBoard()) && !frontier.contains(childRouteNode)){
+//                    frontier.add(childRouteNode);
+//                } else if (frontier.contains(childRouteNode)) {
+//                    frontier.remove(childRouteNode);
+//                    frontier.add(childRouteNode);
+//                }
+//            }
+//        }
+//        return false;
+//    }
+
 
     private boolean solveAstar() {
         System.out.println("AStar");
         Node startNode = new Node(this.board, null, null);
-        RouteNode startRouteNode = new RouteNode(startNode, null, 0, heuristic(startNode));
+        RouteNode startRouteNode = new RouteNode(startNode, null, 0, heuristic(startNode.getBoard()));
 
         Queue<RouteNode> frontier = new PriorityQueue<>();
         Set<String> explored = new HashSet<>();
@@ -172,7 +208,7 @@ public class Solver {
 
             for(Node childNode : currentRouteNode.getNode().getOutcomes()){
                 //TODO CURRENTROUTENODE.GETPARENT?
-                RouteNode childRouteNode = new RouteNode(childNode, currentRouteNode.getNode(), currentRouteNode.getRouteScore() + 1, heuristic(childNode));
+                RouteNode childRouteNode = new RouteNode(childNode, currentRouteNode.getNode(), currentRouteNode.getRouteScore() + 1, heuristic(childNode.getBoard()));
                 if(!explored.contains(childNode.getStringBoard()) && !frontier.contains(childRouteNode)){
                     frontier.add(childRouteNode);
                 } else if (frontier.contains(childRouteNode)) {
@@ -184,21 +220,21 @@ public class Solver {
         return false;
     }
 
-    private double heuristic(Node node) {
+    private double heuristic(Board b) {
         //return 1;
         if(this.heuristic.equals("MANHATTAN")){
-            return Heuristics.avrgManhattanDistance(node.getBoard());
+            return Heuristics.avrgManhattanDistance(b);
         }else if (this.heuristic.equals("MMLB")){
-            return Heuristics.minimumMatchingLowerBound(node.getBoard());
+            return Heuristics.minimumMatchingLowerBound(b);
         }else{
-            return Heuristics.simpleLowerBound(node.getBoard());
+            return Heuristics.simpleLowerBound(b);
         }
     }
 
     private boolean solveGGS() {
         System.out.println("GGs");
         Node startNode = new Node(this.board, null, null);
-        RouteNode startRouteNode = new RouteNode(startNode, null, 0, heuristic(startNode));
+        RouteNode startRouteNode = new RouteNode(startNode, null, 0, heuristic(startNode.getBoard()));
 
         Queue<RouteNode> frontier = new PriorityQueue<>();
         Set<String> explored = new HashSet<>();
@@ -218,7 +254,7 @@ public class Solver {
 
             for(Node childNode : currentRouteNode.getNode().getOutcomes()){
                 //TODO CURRENTROUTENODE.GETPARENT?
-                RouteNode childRouteNode = new RouteNode(childNode, currentRouteNode.getNode(), 0, heuristic(childNode));
+                RouteNode childRouteNode = new RouteNode(childNode, currentRouteNode.getNode(), 0, heuristic(childNode.getBoard()));
                 if(!explored.contains(childNode.getStringBoard()) && !frontier.contains(childRouteNode)){
                     frontier.add(childRouteNode);
                 } else if (frontier.contains(childRouteNode)) {
