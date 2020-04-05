@@ -17,7 +17,7 @@ public class  Node implements Comparable<Node> {
         this.board = board.cloneBoard();
         this.direction = direction;
         this.outcomes = new HashSet<>();
-        stringBoard = board.stringifyBoard();
+        this.stringBoard = board.stringifyBoard();
         this.parent = parent;
     }
 
@@ -90,8 +90,12 @@ public class  Node implements Comparable<Node> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Node node = (Node) o;
-        return  Objects.equals(direction, node.direction) &&
-                Objects.equals(stringBoard, node.stringBoard);
+        return  Objects.equals(stringBoard, node.stringBoard);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash( stringBoard);
     }
 
     @Override
@@ -99,14 +103,10 @@ public class  Node implements Comparable<Node> {
         return this.board.toString();
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(board, direction, outcomes, stringBoard);
-    }
 
     @Override
     public int compareTo(Node node) {
-        
+
         return 0;
     }
 
