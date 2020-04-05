@@ -6,6 +6,7 @@ import java.io.IOException;
 public class Main {
     public static void main(String[] args) {
         File readFile = new File("TP1/maps/" + args[0]);
+//        File readFile = new File("maps/" + args[0]);
 
         Settings settings = new Settings();
         settings.loadSettings(readFile);

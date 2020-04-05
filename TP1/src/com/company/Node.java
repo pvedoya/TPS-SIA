@@ -6,7 +6,7 @@ public class  Node implements Comparable<Node> {
     private Board board;
     private String direction;
     private List<Node> outcomes;
-    private String stringBoard;
+//    private String stringBoard;
     private Node parent;
     private int pathCost;
     private double totalCost;
@@ -15,8 +15,8 @@ public class  Node implements Comparable<Node> {
         this.board = board.cloneBoard();
         this.direction = direction;
         this.outcomes = new ArrayList<>();
-        this.stringBoard = board.stringifyBoard();
         this.parent = parent;
+//        this.stringBoard = board.stringifyBoard();
     }
 
     public Node(Board board, String direction, Node parent, int pathCost){
@@ -36,19 +36,19 @@ public class  Node implements Comparable<Node> {
     public void generateOutcomes(){
         Board aux = this.board.cloneBoard();
         if(aux.makeMove("UP") && !aux.hasBlocked()){
-            outcomes.add(new Node(aux,"UP", this));
+            outcomes.add(new Node(aux,"U", this));
         }
         aux = this.board.cloneBoard();
         if(aux.makeMove("DOWN") && !aux.hasBlocked()){
-            outcomes.add(new Node(aux,"DOWN", this));
+            outcomes.add(new Node(aux,"D", this));
         }
         aux = this.board.cloneBoard();
         if(aux.makeMove("LEFT") && !aux.hasBlocked()){
-            outcomes.add(new Node(aux,"LEFT", this));
+            outcomes.add(new Node(aux,"L", this));
         }
         aux = this.board.cloneBoard();
         if(aux.makeMove("RIGHT") && !aux.hasBlocked()){
-            outcomes.add(new Node(aux,"RIGHT",this));
+            outcomes.add(new Node(aux,"R",this));
 
         }
     }
@@ -56,19 +56,19 @@ public class  Node implements Comparable<Node> {
     public void generateWeightedOutcomes(){
         Board aux = this.board.cloneBoard();
         if(aux.makeMove("UP") && !aux.hasBlocked()){
-            outcomes.add(new Node(aux,"UP", this, this.pathCost + 1));
+            outcomes.add(new Node(aux,"U", this, this.pathCost + 1));
         }
         aux = this.board.cloneBoard();
         if(aux.makeMove("DOWN") && !aux.hasBlocked()){
-            outcomes.add(new Node(aux,"DOWN", this, this.pathCost + 1));
+            outcomes.add(new Node(aux,"D", this, this.pathCost + 1));
         }
         aux = this.board.cloneBoard();
         if(aux.makeMove("LEFT") && !aux.hasBlocked()){
-            outcomes.add(new Node(aux,"LEFT", this, this.pathCost + 1));
+            outcomes.add(new Node(aux,"L", this, this.pathCost + 1));
         }
         aux = this.board.cloneBoard();
         if(aux.makeMove("RIGHT") && !aux.hasBlocked()){
-            outcomes.add(new Node(aux,"RIGHT",this, this.pathCost + 1));
+            outcomes.add(new Node(aux,"R",this, this.pathCost + 1));
 
         }
     }
@@ -95,8 +95,12 @@ public class  Node implements Comparable<Node> {
     }
 
     public String getStringBoard() {
-        return stringBoard;
+        return board.stringifyBoard();
     }
+
+//    public String getStringBoard(){
+//        return stringBoard;
+//    }
 
     public Node getParent() {
         return parent;
@@ -109,12 +113,19 @@ public class  Node implements Comparable<Node> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Node node = (Node) o;
-        return  Objects.equals(stringBoard, node.stringBoard);
+        return Objects.equals(board, node.board);
     }
+
+
+//    @Override
+//    public int hashCode() {
+//        return Objects.hash( stringBoard);
+//    }
+
 
     @Override
     public int hashCode() {
-        return Objects.hash( stringBoard);
+        return Objects.hash(board, direction, outcomes, parent);
     }
 
     @Override

@@ -292,7 +292,7 @@ public class Solver {
 
                 aux.generateOutcomes();
                 for(Node n : aux.getOutcomes()){
-                    if(!explored.contains(n.getStringBoard()) && !n.getBoard().hasBlocked()){
+                    if(!explored.contains(n.getStringBoard()) && !frontier.contains(n) && !n.getBoard().hasBlocked()){
                         frontier.add(n);
                     }
                 }
@@ -333,7 +333,7 @@ public class Solver {
                 node.generateOutcomes();
                 for(Node n : node.getOutcomes()){
 
-                    if(!explored.contains(n.getStringBoard()) && !n.getBoard().hasBlocked()){
+                    if(!explored.contains(n.getStringBoard()) && !frontier.contains(n) && !n.getBoard().hasBlocked()){
                         frontier.add(n);
                     }
                 }
@@ -350,7 +350,6 @@ public class Solver {
         Node node = new Node(this.board, null, null);
         HashSet<String> explored = new HashSet<>();
         Queue<Node> frontier = new LinkedList<>();
-        frontier.add(node);
 
         if(node.isGoal()){
             long endTime = System.nanoTime();
@@ -363,6 +362,7 @@ public class Solver {
 
             return true;
         }
+        frontier.add(node);
 
         while(!frontier.isEmpty()){
             node = frontier.poll();
