@@ -4,7 +4,7 @@ README
 
 En la carpeta del proyecto ya se encuentra el binario TP1.jar listo para ejecutar. 
 
-Si aún así desea compilar su propia versión, simplemente importe el projecto a Intellij (utilizando Java 11), 
+Si aún así desea compilar su propia versión, simplemente importe el projecto a Intellij (utilizando Java 8), 
 y en la sección File->Project Structure->Artifacts, seleccione el signo '+', y seleccione el tipo 'JAR', y 
 seleccione la opción 'From modules with dependencies'. Seleccionar la clase Main como clase principal, y dar 'OK'.
 Una vez hecho esto dar 'Apply', e ir a Build->Build Artifact->Build para crear el .jar en TP1/out/artifacts/TP1_jar.
@@ -46,19 +46,13 @@ BFS
 
 2)
 A*
-MMLB
- ###########
-##         ##
-#  $     $  #
-# $# #.# #$ #
-#    #*#    #####
-#  ###.###  #   #
-#  .*.@.*.      #
-#  ###.###  #   #
-#    #*#    #####
-# $# #.# #$ #
-#  $     $  #
-##         ##
- ###########
+MANHATTAN
+######
+##. ###
+##$   ####
+##    ##
+##   @######
+#######
+
 
 **Los algoritmos y heurísticas están detallados en el archivo de presentación del TP.
