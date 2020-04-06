@@ -269,12 +269,20 @@ public class Board implements Cloneable{
         return freeBoxes == 0;
     }
 
-    public void printBoard() {
-        for (int i = 0; i < this.height; i++){
-            for(int j = 0; j < this.width; j++){
-                System.out.print(board[i][j]);
+    /*
+     * Agrega los BOXGOALS y BALLGOALS al tablero, reemplazandolos donde corresponde, metodo hecho para preparar el tablero para mostrar al usuario
+     * */
+
+    public void fullBoard(){
+
+        for(Integer[] i : this.goals){
+            if(this.board[i[0]][i[1]] == SquareType.BOX.getIcon()){
+                this.board[i[0]][i[1]] = SquareType.BOXGOAL.getIcon();
+            }else if (this.board[i[0]][i[1]] == SquareType.BALL.getIcon()){
+                this.board[i[0]][i[1]] = SquareType.BALLGOAL.getIcon();
+            }else{
+                this.board[i[0]][i[1]] = SquareType.GOAL.getIcon();
             }
-            System.out.print('\n');
         }
     }
 

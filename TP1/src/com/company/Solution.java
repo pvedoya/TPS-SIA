@@ -71,6 +71,7 @@ public class Solution {
     * */
 
     private void writeBoard(Board board, BufferedWriter writer) throws IOException {
+        board.fullBoard();
         for(int i = 0; i < board.getHeight(); i++){
             writer.write(board.getBoard()[i]);
             writer.write("\n");
