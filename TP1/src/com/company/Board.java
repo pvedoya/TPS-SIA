@@ -459,4 +459,51 @@ public class Board implements Cloneable{
         return ret;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Board board1 = (Board) o;
+
+        boolean equalGoals = true;
+        if(goals.size() != board1.goals.size()){
+            equalGoals = false;
+        }else{
+            int found = 0;
+            for(Integer[] i : this.goals){
+                for(Integer[] j : board1.goals){
+                    if(i[0] == j[0] && i[1] == j[1]){
+                        found++;
+                    }
+                }
+            }
+            if(found != this.goals.size()){
+                equalGoals = false;
+            }
+        }
+
+        boolean equalBoards = true;
+        for(int i = 0; i < this.height; i++){
+            for(int j = 0; j < this.height; j++){
+                if(this.board[i][j] != board1.board[i][j]){
+                    equalBoards = false;
+                }
+            }
+        }
+
+        return  width == board1.width &&
+                height == board1.height &&
+                ballX == board1.ballX &&
+                ballY == board1.ballY &&
+                equalBoards &&
+                equalGoals;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(width, height, ballX, ballY, goals);
+        result = 31 * result + Arrays.deepHashCode(board);
+        return result;
+    }
 }

@@ -1,22 +1,31 @@
 package com.company;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Objects;
+import java.util.*;
 
-public class  Node {
+public class  Node implements Comparable<Node> {
     private Board board;
     private String direction;
-    private HashSet<Node> outcomes;
-    private String stringBoard;
+    private List<Node> outcomes;
+//    private String stringBoard;
     private Node parent;
+    private int pathCost;
+    private double totalCost;
 
     public Node(Board board, String direction, Node parent){
         this.board = board.cloneBoard();
         this.direction = direction;
-        this.outcomes = new HashSet<>();
-        stringBoard = board.stringifyBoard();
+        this.outcomes = new ArrayList<>();
         this.parent = parent;
+//        this.stringBoard = board.stringifyBoard();
+    }
+
+    public Node(Board board, String direction, Node parent, int pathCost){
+        this.board = board.cloneBoard();
+        this.outcomes = new ArrayList<>();
+        this.parent = parent;
+        this.pathCost = pathCost;
+        this.totalCost = 0;
+        this.direction = direction;
     }
 
     /*
@@ -27,19 +36,39 @@ public class  Node {
     public void generateOutcomes(){
         Board aux = this.board.cloneBoard();
         if(aux.makeMove("UP") && !aux.hasBlocked()){
-            outcomes.add(new Node(aux,"UP", this));
+            outcomes.add(new Node(aux,"U", this));
         }
         aux = this.board.cloneBoard();
         if(aux.makeMove("DOWN") && !aux.hasBlocked()){
-            outcomes.add(new Node(aux,"DOWN", this));
+            outcomes.add(new Node(aux,"D", this));
         }
         aux = this.board.cloneBoard();
         if(aux.makeMove("LEFT") && !aux.hasBlocked()){
-            outcomes.add(new Node(aux,"LEFT", this));
+            outcomes.add(new Node(aux,"L", this));
         }
         aux = this.board.cloneBoard();
         if(aux.makeMove("RIGHT") && !aux.hasBlocked()){
-            outcomes.add(new Node(aux,"RIGHT",this));
+            outcomes.add(new Node(aux,"R",this));
+
+        }
+    }
+
+    public void generateWeightedOutcomes(){
+        Board aux = this.board.cloneBoard();
+        if(aux.makeMove("UP") && !aux.hasBlocked()){
+            outcomes.add(new Node(aux,"U", this, this.pathCost + 1));
+        }
+        aux = this.board.cloneBoard();
+        if(aux.makeMove("DOWN") && !aux.hasBlocked()){
+            outcomes.add(new Node(aux,"D", this, this.pathCost + 1));
+        }
+        aux = this.board.cloneBoard();
+        if(aux.makeMove("LEFT") && !aux.hasBlocked()){
+            outcomes.add(new Node(aux,"L", this, this.pathCost + 1));
+        }
+        aux = this.board.cloneBoard();
+        if(aux.makeMove("RIGHT") && !aux.hasBlocked()){
+            outcomes.add(new Node(aux,"R",this, this.pathCost + 1));
 
         }
     }
@@ -57,7 +86,7 @@ public class  Node {
         return this.board;
     }
 
-    public HashSet<Node> getOutcomes(){
+    public List<Node> getOutcomes(){
         return outcomes;
     }
 
@@ -66,8 +95,12 @@ public class  Node {
     }
 
     public String getStringBoard() {
-        return stringBoard;
+        return board.stringifyBoard();
     }
+
+//    public String getStringBoard(){
+//        return stringBoard;
+//    }
 
     public Node getParent() {
         return parent;
@@ -80,8 +113,19 @@ public class  Node {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Node node = (Node) o;
-        return  Objects.equals(direction, node.direction) &&
-                Objects.equals(stringBoard, node.stringBoard);
+        return Objects.equals(board, node.board);
+    }
+
+
+//    @Override
+//    public int hashCode() {
+//        return Objects.hash( stringBoard);
+//    }
+
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(board, direction, outcomes, parent);
     }
 
     @Override
@@ -89,9 +133,27 @@ public class  Node {
         return this.board.toString();
     }
 
+
     @Override
-    public int hashCode() {
-        return Objects.hash(board, direction, outcomes, stringBoard);
+    public int compareTo(Node node) {
+        Double d1 = totalCost;
+        Double d2 = node.totalCost;
+        return d1.compareTo(d2);
     }
 
+    public int getPathCost() {
+        return pathCost;
+    }
+
+    public void setPathCost(int pathCost) {
+        this.pathCost = pathCost;
+    }
+
+    public double getTotalCost() {
+        return totalCost;
+    }
+
+    public void setTotalCost(double totalCost) {
+        this.totalCost = totalCost;
+    }
 }
