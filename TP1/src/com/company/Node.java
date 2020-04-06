@@ -9,7 +9,7 @@ public class  Node implements Comparable<Node> {
 //    private String stringBoard;
     private Node parent;
     private int pathCost;
-    private double totalCost;
+    private int totalCost;
 
     public Node(Board board, String direction, Node parent){
         this.board = board.cloneBoard();
@@ -136,8 +136,8 @@ public class  Node implements Comparable<Node> {
 
     @Override
     public int compareTo(Node node) {
-        Double d1 = totalCost;
-        Double d2 = node.totalCost;
+        Integer d1 = totalCost;
+        Integer d2 = node.totalCost;
         return d1.compareTo(d2);
     }
 
@@ -149,11 +149,11 @@ public class  Node implements Comparable<Node> {
         this.pathCost = pathCost;
     }
 
-    public double getTotalCost() {
+    public int getTotalCost() {
         return totalCost;
     }
 
-    public void setTotalCost(double totalCost) {
+    public void setTotalCost(int totalCost) {
         this.totalCost = totalCost;
     }
 }
