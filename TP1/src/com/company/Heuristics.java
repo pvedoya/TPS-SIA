@@ -94,6 +94,26 @@ public class Heuristics {
         return Math.abs(from[0] - to [0]) + Math.abs(from[1] - to[1]);
     }
 
+    private static int optimizedManhattanDistance (Board b, Integer[] from, Integer[] to) {
+
+        int manhattan = manhattanDistance(from, to);
+        char[][] board = b.getBoard();
+
+        /* me fijo en las 4 direcciones si el jugador se puede mover desde from */
+        if ( from[0] - 1 >= 0 && from[0] + 1 < b.getHeight()) {
+            if (board[from[0] - 1][from[1]] == SquareType.WALL.getIcon() || board[from[0] - 1][from[1]] == SquareType.BOX.getIcon() || board[from[0] + 1][from[1]] == SquareType.WALL.getIcon() || board[from[0] + 1][from[1]] == SquareType.BOX.getIcon()) {
+                manhattan ++;
+            }
+        }
+        if ( from[1] - 1 >= 0 && from[1] + 1 < b.getWidth()) {
+            if (board[from[0]][from[1] - 1] == SquareType.WALL.getIcon() || board[from[0]][from[1] - 1] == SquareType.BOX.getIcon() || board[from[0]][from[1] + 1] == SquareType.WALL.getIcon() || board[from[0]][from[1] + 1] == SquareType.BOX.getIcon()) {
+                manhattan ++;
+            }
+        }
+
+        return manhattan;
+    }
+
     private static void getCoordinates(Board b) {
         char[][] board = b.getBoard();
         int height = b.getHeight();
@@ -124,7 +144,7 @@ public class Heuristics {
 
         for (int i = 0; i < boxCoordinates.size(); i++){
             for (int j = 0; j < goalCoordinates.size(); j++) {
-                hungarianMatrix[i][j] = movesCounter(board, boxCoordinates.get(i), goalCoordinates.get(j));
+                hungarianMatrix[i][j] = countMoves(board, boxCoordinates.get(i), goalCoordinates.get(j));
             }
         }
 
@@ -160,7 +180,7 @@ public class Heuristics {
         return resp;
     }
 
-    private static int movesCounter(Board board, Integer[] from, Integer[] to) {
+    private static int countMoves(Board board, Integer[] from, Integer[] to) {
 
         char[][] b = board.getBoard();
         int[] dx = {-1, 1, 0, 0};
@@ -168,20 +188,21 @@ public class Heuristics {
         int directionIndex;
         boolean[] deadlocks = {false, false, false, false};
         Integer[] currentPosition = from;
-        ArrayList<Integer[]> possiblePositions;
         boolean moved, firstMove = true;
-        Set<Integer[]> positions;
+        ArrayList<Integer[]> positions;
 
-        Map<Integer, Set<Integer[]>> paths = new HashMap<>();
+        Map<Integer, ArrayList<Integer[]>> paths = new HashMap<>();
+        Map<Integer, TreeSet<Integer[]>> possiblePositions = new HashMap<>();
         for (int j = 0; j < dx.length; j++) {
-            paths.put(j, new HashSet<>());
+            paths.put(j, new ArrayList<>());
+            possiblePositions.put(j, new TreeSet<>(Comparator.comparingInt(o -> optimizedManhattanDistance(board, o, to))));
         }
+
 
         /* index que nos indica en que dirección arrancó el recorrido */
         directionIndex = 0;
         while (directionIndex < 4 && !deadlocks[directionIndex]) {
 
-            possiblePositions = new ArrayList<>();
             moved = false;
             Integer[] pushFrom = new Integer[]{-1, -1};
 
@@ -234,8 +255,7 @@ public class Heuristics {
 
             }
 
-
-            for (int i = 0; i < dx.length && !deadlocks[directionIndex]; i++){
+            for (int i = 0; i < dx.length && directionIndex < 4 && !deadlocks[directionIndex]; i++){
 
                 /* primero chequeamos que la caja se pueda empujar en la dirección i */
                 switch (i)  {
@@ -277,27 +297,16 @@ public class Heuristics {
                             if (pos[0].equals(nextPosition[0]) && pos[1].equals(nextPosition[1])) repeat.set(true);
                         });
                         if (!repeat.get()) {
-                            possiblePositions.add(nextPosition);
+                            possiblePositions.get(directionIndex).add(nextPosition);
                         }
                     }
                 }
 
             }
 
-            if ((!moved || firstMove) && !possiblePositions.isEmpty()) {
+            if ((!moved || firstMove) && directionIndex < 4 && !possiblePositions.get(directionIndex).isEmpty()) {
 
-                int minDistanceIndex = -1;
-                int minDistance = INFINITE_COST;
-                int aux;
-                for (int k = 0; k < possiblePositions.size(); k++) {
-                    aux = manhattanDistance(possiblePositions.get(k), to);
-                    if (aux <= minDistance) {
-                        minDistance = aux;
-                        minDistanceIndex = k;
-                    }
-                }
-
-                currentPosition = possiblePositions.remove(minDistanceIndex);
+                currentPosition = possiblePositions.get(directionIndex).pollFirst();
                 moved = true;
                 positions = paths.get(directionIndex);
                 positions.add(currentPosition);
@@ -305,7 +314,7 @@ public class Heuristics {
             }
 
             if (!moved) {
-                paths.replace(directionIndex, new HashSet<>()); /* -> de esta manera indicamos que hubo un deadlock */
+                paths.replace(directionIndex, new ArrayList<>()); /* -> de esta manera indicamos que hubo un deadlock */
                 deadlocks[directionIndex] = true;
                 currentPosition = from;
                 directionIndex++;
