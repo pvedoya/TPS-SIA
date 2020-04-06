@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Heuristics {
 
-    private static int INFINITE_COST = Integer.MAX_VALUE;
+    private static int INFINITE_COST = 1000000000;
     private static ArrayList<Integer[]> goalCoordinates;
     private static ArrayList<Integer[]> boxCoordinates;
 
