@@ -310,6 +310,16 @@ public class Solver {
         Stack<Node> frontier = new Stack<>();
         frontier.push(node);
 
+        if(node.isGoal()){
+            long endTime = System.nanoTime();
+            this.time = (endTime - startTime)/1000000;
+
+            this.frontierQ = frontier.size();
+            this.exploredQ = explored.size();
+            moves.add(node);
+            return true;
+        }
+
         while(!frontier.empty()){
             node = frontier.pop();
 

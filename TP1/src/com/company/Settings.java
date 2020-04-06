@@ -26,9 +26,11 @@ public class Settings {
         try {
             readFile(file);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            System.out.println("ERROR: Could not find configuration .txt file in TP1/maps");
+            System.exit(1);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("ERROR: failed with I/O operation");
+            System.exit(1);
         }
     }
 
