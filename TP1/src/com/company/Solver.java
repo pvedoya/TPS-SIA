@@ -132,8 +132,6 @@ public class Solver {
                         continue;
                 }
             }
-
-
         }
 
         if(min == Double.MAX_VALUE) {
@@ -155,6 +153,7 @@ public class Solver {
         public void setSearchReturn(SEARCHRETURN sr) { this.sr=sr; }
         public void setHeuristic(int newHeuristic) { this.newHeuristic=newHeuristic; }
         public int getHeuristic() { return newHeuristic; }
+
     }
 
     private boolean solveAstar() {
