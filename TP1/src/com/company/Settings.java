@@ -3,13 +3,19 @@ package com.company;
 import java.io.*;
 import java.util.*;
 
+/*
+* La clase Settings contiene todos los metodos y variables utilizados para leer y analizar el archivo de entrada,
+* para luego poder darle esa informacion a las clases que encontraran la solucion
+* */
+
 public class Settings {
+    private String algorithm;
+    private String heuristic;
     private int width;
     private int height;
-    private String algorithm;
     private char[][] board;
     private int goals;
-//    heuristic??
+//    maxTime?? TODO
 
     public Settings(){
         this.width = 0;
@@ -25,6 +31,13 @@ public class Settings {
             e.printStackTrace();
         }
     }
+
+    /*
+    * Metodo que escanea linea a linea la informacion del archivo de entrada, donde la primera linea es el algoritmo a utilizarse,
+    * seguido por la heuristica(si el algoritmo lo permite), un tiempo maximo permitido para la ejecucion,
+    * y el tablero en multiples lineas, respetando los simbolos de SquareTypes. Cuando termina la lectura llama a
+    * readLines para hacer analisis del contenido.
+    * */
 
     private void readFile(File file) throws IOException {
         List<String> lines = new ArrayList<>();
@@ -56,18 +69,35 @@ public class Settings {
         readLines(lines);
     }
 
+    /*
+    * Checks for the algorithm and the heuristic name(onlu for informed algorithms)
+    * */
+
     private boolean checkAlgorithm(Scanner scanner){
-        String str = "";
+        String str1 = "";
+        String str2 = "";
+        str1 = scanner.nextLine();
 
-        str = scanner.nextLine();
-
-        if(str.equals("DFS") || str.equals("BFS") || str.equals("IDDFS") || str.equals("GGS") || str.equals("A*") || str.equals("IDA*")){
-            this.algorithm = str;
+        if(str1.equals("DFS") || str1.equals("BFS") || str1.equals("IDDFS") ){
+            this.algorithm = str1;
 
             return true;
+        }else if (str1.equals("GGS") || str1.equals("A*") || str1.equals("IDA*")){
+            this.algorithm = str1;
+            str2 = scanner.nextLine();
+
+            if(str2.equals("MANHATTAN") || str2.equals("SLB") || str2.equals("MMLB")){
+                this.heuristic = str2;
+                return true;
+            }
+
         }
         return false;
     }
+
+    /*
+    * Linea por linea, este metodo se encarga de asignar al tablero los simbolos correspongientes, y llenar los vacios dentro y fuera del tablero
+    * */
 
     private void readLines(List<String> lines){
         int i = 0;
@@ -112,6 +142,8 @@ public class Settings {
         }
     }
 
+    //Getters & Setters
+
     public int getWidth() {
         return width;
     }
@@ -128,12 +160,7 @@ public class Settings {
         return algorithm;
     }
 
-    public void setAlgorithm(String algorithm) {
-        this.algorithm = algorithm;
+    public String getHeuristic() {
+        return heuristic;
     }
-
-    public int getGoals() {
-        return goals;
-    }
-
 }
