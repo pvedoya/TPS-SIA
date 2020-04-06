@@ -97,18 +97,29 @@ public class Heuristics {
     private static int optimizedManhattanDistance (Board b, Integer[] from, Integer[] to) {
 
         int manhattan = manhattanDistance(from, to);
+
+        if (manhattan == 0) {
+            return manhattan;
+        }
+
         char[][] board = b.getBoard();
+        boolean cantMoveH = false, cantMoveV = false;
 
         /* me fijo en las 4 direcciones si el jugador se puede mover desde from */
         if ( from[0] - 1 >= 0 && from[0] + 1 < b.getHeight()) {
             if (board[from[0] - 1][from[1]] == SquareType.WALL.getIcon() || board[from[0] - 1][from[1]] == SquareType.BOX.getIcon() || board[from[0] + 1][from[1]] == SquareType.WALL.getIcon() || board[from[0] + 1][from[1]] == SquareType.BOX.getIcon()) {
-                manhattan ++;
+                cantMoveV = true;
             }
         }
         if ( from[1] - 1 >= 0 && from[1] + 1 < b.getWidth()) {
             if (board[from[0]][from[1] - 1] == SquareType.WALL.getIcon() || board[from[0]][from[1] - 1] == SquareType.BOX.getIcon() || board[from[0]][from[1] + 1] == SquareType.WALL.getIcon() || board[from[0]][from[1] + 1] == SquareType.BOX.getIcon()) {
-                manhattan ++;
+                cantMoveH = true;
             }
+        }
+
+        // se encuentra en una esquina
+        if (cantMoveH && cantMoveV) {
+            manhattan += INFINITE_COST;
         }
 
         return manhattan;
@@ -173,8 +184,8 @@ public class Heuristics {
 
         int resp = INFINITE_COST;
 
-        for (int i = 0; i < boxCoordinates.size() * goalCoordinates.size(); i++) {
-            resp = Math.min(resp, combinations[i]);
+        for (int i = 0; i < combinations.length; i++) {
+            resp = Math.min(resp, Math.abs(combinations[i]));
         }
 
         return resp;
@@ -192,10 +203,10 @@ public class Heuristics {
         ArrayList<Integer[]> positions;
 
         Map<Integer, ArrayList<Integer[]>> paths = new HashMap<>();
-        Map<Integer, TreeSet<Integer[]>> possiblePositions = new HashMap<>();
+        Map<Integer, PriorityQueue<Integer[]>> possiblePositions = new HashMap<>();
         for (int j = 0; j < dx.length; j++) {
             paths.put(j, new ArrayList<>());
-            possiblePositions.put(j, new TreeSet<>(Comparator.comparingInt(o -> optimizedManhattanDistance(board, o, to))));
+            possiblePositions.put(j, new PriorityQueue<>(Comparator.comparingInt(o -> optimizedManhattanDistance(board, o, to))));
         }
 
 
@@ -298,6 +309,7 @@ public class Heuristics {
                         });
                         if (!repeat.get()) {
                             possiblePositions.get(directionIndex).add(nextPosition);
+                            //System.out.println("Adding pos " + nextPosition[0] + ", " + nextPosition[1] + " with distance " + optimizedManhattanDistance(board, nextPosition, to));
                         }
                     }
                 }
@@ -306,7 +318,7 @@ public class Heuristics {
 
             if ((!moved || firstMove) && directionIndex < 4 && !possiblePositions.get(directionIndex).isEmpty()) {
 
-                currentPosition = possiblePositions.get(directionIndex).pollFirst();
+                currentPosition = possiblePositions.get(directionIndex).poll();
                 moved = true;
                 positions = paths.get(directionIndex);
                 positions.add(currentPosition);
