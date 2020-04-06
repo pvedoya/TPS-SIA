@@ -44,6 +44,10 @@ public class Board implements Cloneable{
         this.ballY = y;
     }
 
+    public ArrayList<Integer[]> getGoals () {
+        return goals;
+    }
+
     /*
     * Metodo que llama a los metodos para detectar si las piezas y las paredes son correctas, en caso de no ser correctas corta la ejecucion del programa
     * */
