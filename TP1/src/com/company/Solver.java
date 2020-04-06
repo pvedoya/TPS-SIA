@@ -43,11 +43,11 @@ public class Solver {
         }
 
         Solution solution = null;
-        System.out.println(found);
+
         if(found){
             this.moveQ = 0;
             findPath();
-            solution = new Solution(moves, moveQ, cost, exploredQ, frontierQ, time, algorithm);
+            solution = new Solution(moves, moveQ, cost, exploredQ, frontierQ, time, algorithm, heuristic);
         }
         return solution;
     }
@@ -59,19 +59,16 @@ public class Solver {
 
     private void findPath(){
         Node n = moves.get(0);
-        n.getBoard().fullboard();
+
         while(n.getParent() != null) {
             this.moveQ++;
             moves.add(n.getParent());
             n = n.getParent();
-            n.getBoard().fullboard();
         }
         Collections.reverse(moves);
-        System.out.println(moves.get(moves.size() -1));
     }
 
     private boolean solveIDAstar() {
-        System.out.println("IDAstar");
         Node startNode = new Node(this.board, null, null);
         RouteNode startRouteNode = new RouteNode(startNode, null, 0, heuristic(startNode.getBoard()));
 
@@ -149,7 +146,6 @@ public class Solver {
     }
 
     private boolean solveAstar() {
-        System.out.println("AStar");
         Node startNode = new Node(this.board, null, null,  0);
         startNode.setTotalCost(startNode.getPathCost() + heuristic(startNode.getBoard()));
         Queue<Node> frontier = new PriorityQueue<>(); //todo chequear q este bien el compareto
@@ -206,7 +202,6 @@ public class Solver {
     }
 
     private boolean solveGGS() {
-        System.out.println("GGS");
         Node startNode = new Node(this.board, null, null,  0);
         startNode.setTotalCost(startNode.getPathCost() + heuristic(startNode.getBoard()));
         Queue<Node> frontier = new PriorityQueue<>(); //todo chequear q este bien el compareto

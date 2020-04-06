@@ -17,9 +17,9 @@ public class Solution {
     private int frontierQ;
     private long time;
     private String algorithm;
+    private String heuristic;
 
-
-    public Solution(ArrayList<Node> moves, int depth, int cost, int exploredQ, int frontierQ, long time, String algorithm) {
+    public Solution(ArrayList<Node> moves, int depth, int cost, int exploredQ, int frontierQ, long time, String algorithm, String heuristic) {
         this.moves = moves;
         this.depth = depth;
         this.cost = cost;
@@ -27,6 +27,7 @@ public class Solution {
         this.frontierQ = frontierQ;
         this.time = time;
         this.algorithm = algorithm;
+        this.heuristic = heuristic;
     }
 
     public void dumpToFile() throws IOException {
@@ -41,8 +42,10 @@ public class Solution {
             writer.write("Input board:\n");
             writeBoard(moves.get(0).getBoard(), writer);
             writer.write("\nFound a solution in " + depth + " moves, time taken: " + time + " ms\n");
-            if(!algorithm.equals("DFS") && !algorithm.equals("BFS") && !algorithm.equals("IDDFS")){
-                writer.write("The cost for the algorithm used(" + algorithm + ") was " + cost + "\n");
+            if(algorithm.equals("A*") || algorithm.equals("IDA*") || algorithm.equals("GGS")){
+                writer.write("The cost for the algorithm " + algorithm + " with heuristic " + heuristic + " was " + cost + "\n");
+            }else{
+                writer.write("Solved using the " + algorithm + " algorithm\n");
             }
             writer.write("Nodes explored: " + exploredQ + ", nodes in frontier: " + frontierQ + "\n");
             writer.write("\n");

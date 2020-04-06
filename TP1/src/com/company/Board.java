@@ -484,7 +484,7 @@ public class Board implements Cloneable{
 
         boolean equalBoards = true;
         for(int i = 0; i < this.height; i++){
-            for(int j = 0; j < this.height; j++){
+            for(int j = 0; j < this.width; j++){
                 if(this.board[i][j] != board1.board[i][j]){
                     equalBoards = false;
                 }
