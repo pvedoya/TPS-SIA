@@ -1,6 +1,7 @@
 package com.company;
 
 import java.io.File;
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -159,7 +160,53 @@ public class Heuristics {
             }
         }
 
-        int[] combinations = new int[(int) Math.pow(boxCoordinates.size(), goalCoordinates.size())];
+        if (boxCoordinates.size() == 1) {
+            return hungarianMatrix[0][0];
+        }
+
+        int [][][][] comb = new int[boxCoordinates.size()][goalCoordinates.size() - 1][boxCoordinates.size()][2];
+        for (int i = 0; i < boxCoordinates.size(); i++) {
+            for (int j = 0; j < goalCoordinates.size() -1; j++) {
+                Arrays.fill(comb[i][j], 0, boxCoordinates.size(), new int []{-1, -1});
+            }
+        }
+
+        for (int i= 0; i < boxCoordinates.size(); i++) {
+            for (int j = 0; j < boxCoordinates.size(); j++) {
+
+                if (i == 0) {
+                    for (int k = 0; k < boxCoordinates.size() - 1; k++) {
+                         comb[j][k][0] = new int[]{i, j};
+                    }
+                } else  {
+                    for (int k = 0; k < boxCoordinates.size(); k++) {
+                        if (k != j) {
+                            boolean done = false;
+                            for (int h = 0; h < boxCoordinates.size() - 1 && !done; h++) {
+                                if (comb[k][h][i][0] == -1 && comb[k][h][i][1] == -1 && !isGoalOccupied(comb[k][h], j)) {
+                                    comb[k][h][i] = new int[]{i, j};
+                                    done = true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        int [] combinations = new int[boxCoordinates.size() * (goalCoordinates.size() -1)];
+        Arrays.fill(combinations, 0, boxCoordinates.size() * (goalCoordinates.size() -1), 0);
+        int index = 0;
+        for (int i = 0; i < boxCoordinates.size(); i++) {
+            for (int j = 0; j < goalCoordinates.size() -1; j++) {
+                 for (int k = 0; k < goalCoordinates.size(); k++) {
+                     if (comb[i][j][k][0] != -1 && comb[i][j][k][1] != -1) combinations[index] += hungarianMatrix[comb[i][j][k][0]][comb[i][j][k][1]];
+                 }
+                 index++;
+            }
+        }
+
+        /*int[] combinations = new int[(int) Math.pow(boxCoordinates.size(), goalCoordinates.size())];
         Arrays.fill(combinations, 0, (int) Math.pow(boxCoordinates.size(), goalCoordinates.size()), 0);
         for (int i = 0; i < boxCoordinates.size(); i++) {
             for (int j = 0; j < goalCoordinates.size(); j++) {
@@ -178,17 +225,17 @@ public class Heuristics {
 
                 do {
                     for (int k = j * range + rep * space; k < (j+1) * range + rep * space ; k++) {
-                        if (i > 0 && rep == j) {
+                        *//*if (i > 0 && rep == j) {
                             combinations[k] += INFINITE_COST;
-                        } else {
+                        } else {*//*
                             combinations[k] += hungarianMatrix[i][j];
-                        }
+                        *//*}*//*
                     }
                     rep++;
                 } while (rep < limit);
 
             }
-        }
+        }*/
 
         int resp = INFINITE_COST;
 
@@ -197,6 +244,16 @@ public class Heuristics {
         }
 
         return resp;
+    }
+
+    private static boolean isGoalOccupied (int[][] coordenates, int column) {
+
+        for (int i = 0; i < boxCoordinates.size(); i++){
+            if (coordenates[i][1] == column)
+                return true;
+        }
+
+        return false;
     }
 
     private static int countMoves(Board board, Integer[] from, Integer[] to) {
