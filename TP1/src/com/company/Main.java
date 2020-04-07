@@ -18,7 +18,9 @@ public class Main {
 
         try {
             Solution solution = solver.generateSolution();
-            solution.dumpToFile();
+            if(solution != null) {
+                solution.dumpToFile();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }catch(OutOfMemoryError e){

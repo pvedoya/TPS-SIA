@@ -113,7 +113,8 @@ public class  Node implements Comparable<Node> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Node node = (Node) o;
-        return Objects.equals(board, node.board);
+       // return Objects.equals(board, node.board) && pathCost == node.getPathCost() && totalCost == node.getTotalCost();
+        return board.equals(node.board);
     }
 
 
@@ -125,7 +126,7 @@ public class  Node implements Comparable<Node> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(board, direction, outcomes, parent);
+        return board.hashCode();
     }
 
     @Override

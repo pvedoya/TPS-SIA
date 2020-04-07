@@ -76,73 +76,128 @@ public class Solver {
         int threshold = heuristic(startNode.getBoard());
 
         startNode.setTotalCost(startNode.getPathCost() + threshold);
-        Set<Board> explored = new HashSet<>();
+        List<Board> explored = new ArrayList<>();
 
         while(true) {
-            RetIDAstar ret = searchIDAstar(startNode,  threshold, explored);
-            switch (ret.getSearchReturn()) {
-                case BOUND:
-                    threshold = ret.getHeuristic();
-                    break;
-                case FOUND:
-                    return true;
-                case NOT_FOUND:
-                    return false;
+            int ret = searchIDAstar(startNode, 0,  threshold, explored);
+            if(ret == -1) { //found
+                return true;
+            } else {
+               explored.clear();
+               threshold = ret;
             }
+
         }
     }
 
-    private RetIDAstar searchIDAstar(Node currentNode, int threshold, Set<Board> explored) {
-        RetIDAstar ret = new RetIDAstar();
+    private int searchIDAstar(Node currentNode, int currentDepth, int threshold, List<Board> explored) {
+        int f = currentDepth + heuristic(currentNode.getBoard());
+        if(f > threshold) {
+            return f;
+        }
 
         if(currentNode.isGoal()){
             moves.add(currentNode);
-            ret.setSearchReturn(SEARCHRETURN.FOUND);
-            return ret;
+            return -1;
         }
-
-        int f = currentNode.getTotalCost();
-        //si el f es mas grande que el threshold, return y poner el nuevo threshold
-        if(f > threshold) {
-            ret.setSearchReturn(SEARCHRETURN.BOUND);
-            ret.setHeuristic(f);
-            return ret;
-        }
-
-        explored.add(currentNode.getBoard());
 
         int min = Integer.MAX_VALUE;
         currentNode.generateWeightedOutcomes();
+        List<Node> n = currentNode.getOutcomes();
+        explored.add(currentNode.getBoard());
+        int ret;
 
-        for(Node childNode : currentNode.getOutcomes()){
+        for(Node childNode : currentNode.getOutcomes()) {
             if(!explored.contains(childNode.getBoard())) {
-                childNode.setTotalCost(childNode.getPathCost() + heuristic(childNode.getBoard()));
-
-                RetIDAstar r = searchIDAstar(childNode, threshold, explored);
-
-                switch (r.getSearchReturn()) {
-                    case BOUND:
-                        if(r.getHeuristic() < min) {
-                            min = r.getHeuristic();
-                        }
-                        break;
-                    case FOUND:
-                        return r;
-                    case NOT_FOUND:
-                        continue;
+                ret  = searchIDAstar(childNode, currentDepth + 1, threshold, explored);
+                if(ret == -1) {
+                    return -1;
+                }
+                if(ret < min) {
+                    min = ret;
                 }
             }
         }
-
-        if(min == Double.MAX_VALUE) {
-            ret.setSearchReturn(SEARCHRETURN.NOT_FOUND);
-        } else {
-            ret.setHeuristic(min);
-            ret.setSearchReturn(SEARCHRETURN.BOUND);
-        }
-        explored.remove(currentNode.getBoard());
-        return ret;
+        return min;
     }
+
+
+
+
+//    private boolean solveIDAstar() {
+//        System.out.println("IDAstar");
+//        Node startNode = new Node(this.board, null, null,  0);
+//        int threshold = heuristic(startNode.getBoard());
+//
+//        startNode.setTotalCost(startNode.getPathCost() + threshold);
+//        Set<Board> explored = new HashSet<>();
+//
+//        while(true) {
+//            RetIDAstar ret = searchIDAstar(startNode,  threshold, explored);
+//            switch (ret.getSearchReturn()) {
+//                case BOUND:
+//                    threshold = ret.getHeuristic();
+//                    break;
+//                case FOUND:
+//                    return true;
+//                case NOT_FOUND:
+//                    return false;
+//            }
+//        }
+//    }
+//
+//    private RetIDAstar searchIDAstar(Node currentNode, int threshold, Set<Board> explored) {
+//        RetIDAstar ret = new RetIDAstar();
+//
+//        if(currentNode.isGoal()){
+//            moves.add(currentNode);
+//            ret.setSearchReturn(SEARCHRETURN.FOUND);
+//            return ret;
+//        }
+//
+//        int f = currentNode.getTotalCost();
+//        //si el f es mas grande que el threshold, return y poner el nuevo threshold
+//        if(f > threshold) {
+//            ret.setSearchReturn(SEARCHRETURN.BOUND);
+//            ret.setHeuristic(f);
+//            return ret;
+//        }
+//
+//        explored.add(currentNode.getBoard());
+//
+//        int min = Integer.MAX_VALUE;
+//        currentNode.generateWeightedOutcomes();
+//        List<Node> n = currentNode.getOutcomes();
+//
+//        for(Node childNode : currentNode.getOutcomes()){
+//            if(!explored.contains(childNode.getBoard())) {
+//                childNode.setTotalCost(childNode.getPathCost() + heuristic(childNode.getBoard()));
+//
+//                RetIDAstar r = searchIDAstar(childNode, threshold, explored);
+//
+//                switch (r.getSearchReturn()) {
+//                    case BOUND:
+//                        if(r.getHeuristic() < min) {
+//                            min = r.getHeuristic();
+//                        }
+//                        break;
+//                    case FOUND:
+//                        return r;
+//                    case NOT_FOUND:
+//                        continue;
+//                }
+//            }
+//        }
+//
+//        if(min == Double.MAX_VALUE) {
+//            ret.setSearchReturn(SEARCHRETURN.NOT_FOUND);
+//        } else {
+//            ret.setHeuristic(min);
+//            ret.setSearchReturn(SEARCHRETURN.BOUND);
+//        }
+//        explored.remove(currentNode.getBoard());
+//        return ret;
+//    }
 
     private enum SEARCHRETURN { BOUND, FOUND, NOT_FOUND };
 
@@ -159,45 +214,45 @@ public class Solver {
     private boolean solveAstar() {
         System.out.println("AStar");
         Node startNode = new Node(this.board, null, null,  0);
-        startNode.setTotalCost(startNode.getPathCost() + heuristic(startNode.getBoard()));
+        int h = heuristic(startNode.getBoard());
+        if(h >= 1000000000) {
+            return false;
+        }
+        startNode.setTotalCost(startNode.getPathCost() + h);
         Queue<Node> frontier = new PriorityQueue<>(); //todo chequear q este bien el compareto
         frontier.add(startNode);
-        Set<Board> explored = new HashSet<>();
+        Set<Node> explored = new HashSet<>();
 
         while (!frontier.isEmpty()) {
             Node currentNode = frontier.poll(); //devuelve el nodo con menor costo por ser una priority queue
             if (currentNode.isGoal()) {
+                System.out.println("TOTAL COST: "+ currentNode.getTotalCost());
+                System.out.println("PATH COST: "+ currentNode.getPathCost());
                 moves.add(currentNode);
                 return true;
             }
-            explored.add(currentNode.getBoard());
+            explored.add(currentNode);
             currentNode.generateWeightedOutcomes();
-//            List<Node> outcomes = currentNode.getOutcomes();
+            List<Node> outcomes = currentNode.getOutcomes();
             for(Node childNode : currentNode.getOutcomes()){
-                childNode.setTotalCost(childNode.getPathCost() + heuristic(childNode.getBoard()));
-                if(!explored.contains(childNode.getBoard())){
-                    boolean exists = false;
-                    for(Node n : frontier) {
-                        if(childNode.getBoard().equals(n.getBoard())) {
-                            exists = true;
-                            break;
-                        }
-                    }
-                    if(!exists) {
+                h = heuristic(childNode.getBoard());
+//                if(h < 1000000000) {
+                    childNode.setTotalCost(childNode.getPathCost() + h);
+                    if(!explored.contains(childNode) && !frontier.contains(childNode)){
                         frontier.add(childNode);
-                    }
-                } else {
-                    for(Node n : frontier) {
-                        if(childNode.getBoard().equals(n.getBoard())) {
-                            if(n.getTotalCost() > childNode.getTotalCost()) {
-                                frontier.remove(n);
-                                frontier.add(childNode);
-                                break;
+                    } else if(frontier.contains(childNode)){
+                        for(Node n : frontier) { //NO SE COMO HACER UN GET
+                            if(childNode.equals(n)) {
+                                if(n.getTotalCost() > childNode.getTotalCost()) { //todo si tienen = costo
+                                    frontier.remove(n);
+                                    frontier.add(childNode);
+                                    break;
+                                }
                             }
                         }
                     }
                 }
-            }
+           // }
         }
         return false;
     }
@@ -224,6 +279,8 @@ public class Solver {
         while (!frontier.isEmpty()) {
             Node currentNode = frontier.poll(); //devuelve el nodo con menor costo por ser una priority queue
             if (currentNode.isGoal()) {
+                System.out.println("TOTAL COST: "+ currentNode.getTotalCost());
+                System.out.println("TOTAL COST: "+ currentNode.getTotalCost());
                 moves.add(currentNode);
                 return true;
             }
