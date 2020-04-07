@@ -311,7 +311,7 @@ public class Heuristics {
                     if (b[nextPosition[0]][nextPosition[1]] == SquareType.TILE.getIcon()
                             || b[nextPosition[0]][nextPosition[1]] == SquareType.BALL.getIcon()
                             || (isGoal(nextPosition) && !(nextPosition[0].equals(to[0]) && nextPosition[1].equals(to[1])))) {
-                        /*if (!paths.get(directionIndex).contains(nextPosition)) possiblePositions.add(nextPosition);*/
+
                         positions = paths.get(directionIndex);
                         AtomicBoolean repeat = new AtomicBoolean(false);
                         positions.forEach( pos -> {
