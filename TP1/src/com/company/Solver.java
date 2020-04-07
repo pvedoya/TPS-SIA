@@ -16,7 +16,7 @@ public class Solver {
     private int exploredQ;
     private int frontierQ;
     private long time;
-    private int cost;
+    private double cost;
 
 
     public Solver(String algorithm,String heuristic,Board board){
@@ -69,6 +69,8 @@ public class Solver {
     }
 
     private boolean solveIDAstar() {
+        long startTime = System.nanoTime();
+
         Node startNode = new Node(this.board, null, null);
         RouteNode startRouteNode = new RouteNode(startNode, null, 0, heuristic(startNode.getBoard()));
 
@@ -80,6 +82,8 @@ public class Solver {
                     threshold = ret.getHeuristic();
                     break;
                 case FOUND:
+                    long endTime = System.nanoTime();
+                    this.time = (endTime - startTime)/1000000;
                     return true;
                 case NOT_FOUND:
                     return false;
@@ -92,6 +96,7 @@ public class Solver {
 
         if(routeNode.getNode().isGoal()){
             moves.add(routeNode.getNode());
+            this.cost = routeNode.getNode().getTotalCost();
             ret.setSearchReturn(SEARCHRETURN.FOUND);
             return ret;
         }
@@ -146,6 +151,8 @@ public class Solver {
     }
 
     private boolean solveAstar() {
+        long startTime = System.nanoTime();
+
         Node startNode = new Node(this.board, null, null,  0);
         startNode.setTotalCost(startNode.getPathCost() + heuristic(startNode.getBoard()));
         Queue<Node> frontier = new PriorityQueue<>(); //todo chequear q este bien el compareto
@@ -156,6 +163,12 @@ public class Solver {
             Node currentNode = frontier.poll(); //devuelve el nodo con menor costo por ser una priority queue
             if (currentNode.isGoal()) {
                 moves.add(currentNode);
+                this.cost = currentNode.getTotalCost();
+                this.frontierQ = frontier.size();
+                this.exploredQ = explored.size();
+
+                long endTime = System.nanoTime();
+                this.time = (endTime - startTime)/1000000;
                 return true;
             }
             explored.add(currentNode.getBoard());
@@ -202,6 +215,8 @@ public class Solver {
     }
 
     private boolean solveGGS() {
+        long startTime = System.nanoTime();
+
         Node startNode = new Node(this.board, null, null,  0);
         startNode.setTotalCost(startNode.getPathCost() + heuristic(startNode.getBoard()));
         Queue<Node> frontier = new PriorityQueue<>(); //todo chequear q este bien el compareto
@@ -212,6 +227,13 @@ public class Solver {
             Node currentNode = frontier.poll(); //devuelve el nodo con menor costo por ser una priority queue
             if (currentNode.isGoal()) {
                 moves.add(currentNode);
+                this.cost = currentNode.getTotalCost();
+                this.frontierQ = frontier.size();
+                this.exploredQ = explored.size();
+
+                long endTime = System.nanoTime();
+                this.time = (endTime - startTime)/1000000;
+
                 return true;
             }
             explored.add(currentNode.getBoard());
@@ -310,13 +332,21 @@ public class Solver {
         Stack<Node> frontier = new Stack<>();
         frontier.push(node);
 
+        if(node.isGoal()){
+            long endTime = System.nanoTime();
+            this.time = (endTime - startTime)/1000000;
+
+            this.frontierQ = frontier.size();
+            this.exploredQ = explored.size();
+            moves.add(node);
+            return true;
+        }
+
         while(!frontier.empty()){
             node = frontier.pop();
+            explored.add(node.getStringBoard());
 
-            if( !explored.contains(node.getStringBoard()) ){
-                explored.add(node.getStringBoard());
-
-                if(node.isGoal()){
+            if(node.isGoal()){
                     long endTime = System.nanoTime();
                     this.time = (endTime - startTime)/1000000;
 
@@ -325,15 +355,12 @@ public class Solver {
                     moves.add(node);
                     return true;
                 }
-                node.generateOutcomes();
-                for(Node n : node.getOutcomes()){
-
-                    if(!explored.contains(n.getStringBoard()) && !frontier.contains(n) && !n.getBoard().hasBlocked()){
-                        frontier.add(n);
-                    }
+            node.generateOutcomes();
+            for(Node n : node.getOutcomes()){
+                if(!explored.contains(n.getStringBoard()) && !frontier.contains(n) && !n.getBoard().hasBlocked()){
+                    frontier.add(n);
                 }
             }
-
         }
 
         return false;

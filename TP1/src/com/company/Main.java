@@ -20,9 +20,11 @@ public class Main {
             Solution solution = solver.generateSolution();
             solution.dumpToFile();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("ERROR: Failed to open and write in solution.txt file");
+            System.exit(1);
         }catch(OutOfMemoryError e){
-            e.printStackTrace();
+            System.out.println("ERROR: System could not find enough memory to generate solution");
+            System.exit(1);
         }
     }
 }
