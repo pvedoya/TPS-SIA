@@ -476,18 +476,6 @@ public class Board implements Cloneable{
         boolean equalGoals = true;
         if(goals.size() != board1.goals.size()){
             equalGoals = false;
-        }else{
-            int found = 0;
-            for(Integer[] i : this.goals){
-                for(Integer[] j : board1.goals){
-                    if(i[0] == j[0] && i[1] == j[1]){
-                        found++;
-                    }
-                }
-            }
-            if(found != this.goals.size()){
-                equalGoals = false;
-            }
         }
 
         boolean equalBoards = true;

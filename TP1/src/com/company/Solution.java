@@ -12,14 +12,14 @@ import java.util.ArrayList;
 public class Solution {
     private ArrayList<Node> moves;
     private int depth;
-    private int cost;
+    private double cost;
     private int exploredQ;
     private int frontierQ;
     private long time;
     private String algorithm;
     private String heuristic;
 
-    public Solution(ArrayList<Node> moves, int depth, int cost, int exploredQ, int frontierQ, long time, String algorithm, String heuristic) {
+    public Solution(ArrayList<Node> moves, int depth, double cost, int exploredQ, int frontierQ, long time, String algorithm, String heuristic) {
         this.moves = moves;
         this.depth = depth;
         this.cost = cost;
