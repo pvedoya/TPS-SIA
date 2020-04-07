@@ -5,8 +5,8 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) {
-        File readFile = new File("TP1/maps/" + args[0]);
-//        File readFile = new File("maps/" + args[0]);
+//        File readFile = new File("TP1/maps/" + args[0]);
+        File readFile = new File("maps/" + args[0]);
 
         Settings settings = new Settings();
         settings.loadSettings(readFile);
@@ -22,9 +22,11 @@ public class Main {
                 solution.dumpToFile();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("ERROR: Failed to open and write in solution.txt file");
+            System.exit(1);
         }catch(OutOfMemoryError e){
-            e.printStackTrace();
+            System.out.println("ERROR: System could not find enough memory to generate solution");
+            System.exit(1);
         }
     }
 }
