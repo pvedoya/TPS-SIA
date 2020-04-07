@@ -1,7 +1,5 @@
 package com.company;
 
-import com.sun.tools.javac.util.Pair;
-
 import java.io.File;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
