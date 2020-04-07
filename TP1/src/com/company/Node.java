@@ -117,13 +117,6 @@ public class  Node implements Comparable<Node> {
         return board.equals(node.board);
     }
 
-
-//    @Override
-//    public int hashCode() {
-//        return Objects.hash( stringBoard);
-//    }
-
-
     @Override
     public int hashCode() {
         return board.hashCode();

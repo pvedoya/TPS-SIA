@@ -241,7 +241,13 @@ public class Solver {
             List<Node> outcomes = currentNode.getOutcomes();
             for(Node childNode : currentNode.getOutcomes()){
                 h = heuristic(childNode.getBoard());
-//                if(h < 1000000000) {
+
+                if(h >= 1000000000) {
+                    System.out.println("hola");
+                    System.out.println(childNode.getBoard().toString());
+                }
+
+                //if(h < 1000000000) {
                     childNode.setTotalCost(childNode.getPathCost() + h);
                     if(!explored.contains(childNode) && !frontier.contains(childNode)){
                         frontier.add(childNode);
@@ -255,9 +261,18 @@ public class Solver {
                                 }
                             }
                         }
+                    } else if(explored.contains(childNode)) {
+                        for(Node n : explored) { //NO SE COMO HACER UN GET
+                            if(childNode.equals(n)) {
+                                if(n.getTotalCost() > childNode.getTotalCost()) { //todo si tienen = costo
+                                    frontier.add(childNode);
+                                    break;
+                                }
+                            }
+                        }
                     }
-                }
-           // }
+                //}
+           }
         }
         return false;
     }
@@ -277,16 +292,20 @@ public class Solver {
         long startTime = System.nanoTime();
 
         Node startNode = new Node(this.board, null, null,  0);
-        startNode.setTotalCost(heuristic(startNode.getBoard()));
+        int h = heuristic(startNode.getBoard());
+        if(h >= 1000000000) {
+            return false;
+        }
+        startNode.setTotalCost(h);
         Queue<Node> frontier = new PriorityQueue<>(); //todo chequear q este bien el compareto
         frontier.add(startNode);
-        Set<Board> explored = new HashSet<>();
+        Set<Node> explored = new HashSet<>();
 
         while (!frontier.isEmpty()) {
             Node currentNode = frontier.poll(); //devuelve el nodo con menor costo por ser una priority queue
             if (currentNode.isGoal()) {
                 System.out.println("TOTAL COST: "+ currentNode.getTotalCost());
-                System.out.println("TOTAL COST: "+ currentNode.getTotalCost());
+                System.out.println("PATH COST: "+ currentNode.getPathCost());
                 moves.add(currentNode);
                 this.cost = currentNode.getTotalCost();
                 this.frontierQ = frontier.size();
@@ -294,29 +313,21 @@ public class Solver {
 
                 long endTime = System.nanoTime();
                 this.time = (endTime - startTime)/1000000;
-
                 return true;
             }
-            explored.add(currentNode.getBoard());
+            explored.add(currentNode);
             currentNode.generateWeightedOutcomes();
-//            List<Node> outcomes = currentNode.getOutcomes();
+            List<Node> outcomes = currentNode.getOutcomes();
             for(Node childNode : currentNode.getOutcomes()){
-                childNode.setTotalCost(heuristic(childNode.getBoard()));
-                if(!explored.contains(childNode.getBoard())){
-                    boolean exists = false;
-                    for(Node n : frontier) {
-                        if(childNode.getBoard().equals(n.getBoard())) {
-                            exists = true;
-                            break;
-                        }
-                    }
-                    if(!exists) {
-                        frontier.add(childNode);
-                    }
-                } else {
-                    for(Node n : frontier) {
-                        if(childNode.getBoard().equals(n.getBoard())) {
-                            if(n.getTotalCost() > childNode.getTotalCost()) {
+                h = heuristic(childNode.getBoard());
+                //if(h < 1000000000) {
+                childNode.setTotalCost(h);
+                if(!explored.contains(childNode) && !frontier.contains(childNode)){
+                    frontier.add(childNode);
+                } else if(frontier.contains(childNode)){
+                    for(Node n : frontier) { //NO SE COMO HACER UN GET
+                        if(childNode.equals(n)) {
+                            if(n.getTotalCost() > childNode.getTotalCost()) { //todo si tienen = costo
                                 frontier.remove(n);
                                 frontier.add(childNode);
                                 break;
@@ -325,6 +336,7 @@ public class Solver {
                     }
                 }
             }
+            //}
         }
         return false;
     }
