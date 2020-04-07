@@ -265,7 +265,7 @@ public class Heuristics {
                             || b[nextPosition[0]][nextPosition[1]] == SquareType.BALL.getIcon()
                             || (isGoal(nextPosition) && !(nextPosition[0].equals(to[0]) && nextPosition[1].equals(to[1])))) {
 
-                        if (directionIndex < 4)
+                        if (directionIndex < 4) {
                             moved = true;
                             currentPosition = nextPosition;
                             positions = paths.get(directionIndex);
