@@ -43,11 +43,12 @@ public class Solver {
         }
 
         Solution solution = null;
-        System.out.println(found);
         if(found){
             this.moveQ = 0;
             findPath();
-            solution = new Solution(moves, moveQ, cost, exploredQ, frontierQ, time, algorithm, heuristic);
+            solution = new Solution(moves, moveQ, cost, exploredQ, frontierQ, time, algorithm, heuristic, true);
+        } else {
+            solution = new Solution(moves, moveQ, cost, exploredQ, frontierQ, time, algorithm, heuristic, false);
         }
         return solution;
     }
@@ -69,7 +70,6 @@ public class Solver {
     }
 
     private boolean solveIDAstar() {
-        System.out.println("IDAstar");
         long startTime = System.nanoTime();
         Node startNode = new Node(this.board, null, null,  0);
         int threshold = heuristic(startNode.getBoard());
@@ -99,24 +99,18 @@ public class Solver {
 
         if(currentNode.isGoal()){
             moves.add(currentNode);
-            System.out.println("TOTAL COST: "+ currentNode.getTotalCost());
-            System.out.println("PATH COST: "+ currentNode.getPathCost());
-            moves.add(currentNode);
             this.cost = currentNode.getTotalCost();
-            //this.frontierQ = frontier.size();
             this.exploredQ = explored.size();
-
             return -1;
         }
 
         int min = Integer.MAX_VALUE;
         currentNode.generateWeightedOutcomes();
-       // List<Node> n = currentNode.getOutcomes();
         explored.add(currentNode);
         int ret;
 
         for(Node childNode : currentNode.getOutcomes()) {
-            if(!explored.contains(childNode.getBoard())) {
+            if(!explored.contains(childNode)) {
                 ret  = searchIDAstar(childNode, currentDepth + 1, threshold, explored);
                 if(ret == -1) {
                     return -1;
@@ -127,96 +121,6 @@ public class Solver {
             }
         }
         return min;
-    }
-
-
-//
-//
-//    private boolean solveIDAstar() {
-//        System.out.println("IDAstar");
-//        Node startNode = new Node(this.board, null, null,  0);
-//        int threshold = heuristic(startNode.getBoard());
-//
-//        startNode.setTotalCost(startNode.getPathCost() + threshold);
-//        Set<Board> explored = new HashSet<>();
-//
-//        while(true) {
-//            RetIDAstar ret = searchIDAstar(startNode,  threshold, explored);
-//            switch (ret.getSearchReturn()) {
-//                case BOUND:
-//                    threshold = ret.getHeuristic();
-//                    break;
-//                case FOUND:
-//                    return true;
-//                case NOT_FOUND:
-//                    return false;
-//            }
-//        }
-//    }
-//
-//    private RetIDAstar searchIDAstar(Node currentNode, int threshold, Set<Board> explored) {
-//        RetIDAstar ret = new RetIDAstar();
-//
-//        if(currentNode.isGoal()){
-//            moves.add(currentNode);
-//            ret.setSearchReturn(SEARCHRETURN.FOUND);
-//            return ret;
-//        }
-//
-//        int f = currentNode.getTotalCost();
-//        //si el f es mas grande que el threshold, return y poner el nuevo threshold
-//        if(f > threshold) {
-//            ret.setSearchReturn(SEARCHRETURN.BOUND);
-//            ret.setHeuristic(f);
-//            return ret;
-//        }
-//
-//        explored.add(currentNode.getBoard());
-//
-//        int min = Integer.MAX_VALUE;
-//        currentNode.generateWeightedOutcomes();
-//        List<Node> n = currentNode.getOutcomes();
-//
-//        for(Node childNode : currentNode.getOutcomes()){
-//            if(!explored.contains(childNode.getBoard())) {
-//                childNode.setTotalCost(childNode.getPathCost() + heuristic(childNode.getBoard()));
-//
-//                RetIDAstar r = searchIDAstar(childNode, threshold, explored);
-//
-//                switch (r.getSearchReturn()) {
-//                    case BOUND:
-//                        if(r.getHeuristic() < min) {
-//                            min = r.getHeuristic();
-//                        }
-//                        break;
-//                    case FOUND:
-//                        return r;
-//                    case NOT_FOUND:
-//                        continue;
-//                }
-//            }
-//        }
-//
-//        if(min == Double.MAX_VALUE) {
-//            ret.setSearchReturn(SEARCHRETURN.NOT_FOUND);
-//        } else {
-//            ret.setHeuristic(min);
-//            ret.setSearchReturn(SEARCHRETURN.BOUND);
-//        }
-//        explored.remove(currentNode.getBoard());
-//        return ret;
-//    }
-
-    private enum SEARCHRETURN { BOUND, FOUND, NOT_FOUND };
-
-    private static class RetIDAstar {
-        private SEARCHRETURN sr;
-        private int newHeuristic;
-        public SEARCHRETURN getSearchReturn() { return sr; }
-        public void setSearchReturn(SEARCHRETURN sr) { this.sr=sr; }
-        public void setHeuristic(int newHeuristic) { this.newHeuristic=newHeuristic; }
-        public int getHeuristic() { return newHeuristic; }
-
     }
 
     private boolean solveAstar() {
@@ -235,8 +139,6 @@ public class Solver {
         while (!frontier.isEmpty()) {
             Node currentNode = frontier.poll(); //devuelve el nodo con menor costo por ser una priority queue
             if (currentNode.isGoal()) {
-                System.out.println("TOTAL COST: "+ currentNode.getTotalCost());
-                System.out.println("PATH COST: "+ currentNode.getPathCost());
                 moves.add(currentNode);
                 this.cost = currentNode.getTotalCost();
                 this.frontierQ = frontier.size();
@@ -248,16 +150,8 @@ public class Solver {
             }
             explored.add(currentNode);
             currentNode.generateWeightedOutcomes();
-            List<Node> outcomes = currentNode.getOutcomes();
             for(Node childNode : currentNode.getOutcomes()){
                 h = heuristic(childNode.getBoard());
-
-//                if(h >= 1000000000) {
-//                    System.out.println("hola");
-//                    System.out.println(childNode.getBoard().toString());
-//                }
-
-               // if(h < 1000000000) {
                     childNode.setTotalCost(childNode.getPathCost() + h);
                     if(!explored.contains(childNode) && !frontier.contains(childNode)){
                         frontier.add(childNode);
@@ -282,12 +176,10 @@ public class Solver {
                     }
                 }
            }
-        //}
         return false;
     }
 
     private int heuristic(Board b) {
-        //return 1;
         if(this.heuristic.equals("MANHATTAN")){
             return Heuristics.avrgManhattanDistance(b);
         }else if (this.heuristic.equals("MMLB")){
@@ -313,8 +205,6 @@ public class Solver {
         while (!frontier.isEmpty()) {
             Node currentNode = frontier.poll(); //devuelve el nodo con menor costo por ser una priority queue
             if (currentNode.isGoal()) {
-                System.out.println("TOTAL COST: "+ currentNode.getTotalCost());
-                System.out.println("PATH COST: "+ currentNode.getPathCost());
                 moves.add(currentNode);
                 this.cost = currentNode.getTotalCost();
                 this.frontierQ = frontier.size();
@@ -326,17 +216,9 @@ public class Solver {
             }
             explored.add(currentNode);
             currentNode.generateWeightedOutcomes();
-            //List<Node> outcomes = currentNode.getOutcomes();
             for(Node childNode : currentNode.getOutcomes()){
                 System.out.println(childNode.getBoard().toString());
                 h = heuristic(childNode.getBoard());
-
-//                if(h >= 1000000000) {
-//                    System.out.println("hola");
-//                    System.out.println(childNode.getBoard().toString());
-//                }
-
-                //if(h < 1000000000) {
                 childNode.setTotalCost(h);
                 if(!explored.contains(childNode) && !frontier.contains(childNode)){
                     frontier.add(childNode);
@@ -361,7 +243,6 @@ public class Solver {
                 }
             }
         }
-        //}
         return false;
     }
 

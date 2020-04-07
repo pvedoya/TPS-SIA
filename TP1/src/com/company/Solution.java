@@ -18,8 +18,9 @@ public class Solution {
     private long time;
     private String algorithm;
     private String heuristic;
+    private boolean found;
 
-    public Solution(ArrayList<Node> moves, int depth, double cost, int exploredQ, int frontierQ, long time, String algorithm, String heuristic) {
+    public Solution(ArrayList<Node> moves, int depth, double cost, int exploredQ, int frontierQ, long time, String algorithm, String heuristic, boolean found) {
         this.moves = moves;
         this.depth = depth;
         this.cost = cost;
@@ -28,13 +29,14 @@ public class Solution {
         this.time = time;
         this.algorithm = algorithm;
         this.heuristic = heuristic;
+        this.found = found;
     }
 
     public void dumpToFile() throws IOException {
 
         System.out.println("");
 
-        if (moves.isEmpty()) {
+        if (moves.isEmpty() || !found) {
             System.out.println("Could not find a solution using " + algorithm);
         }else{
             System.out.println("Solution found, copying data to solution.txt file on root folder");
