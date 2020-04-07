@@ -241,7 +241,7 @@ public class Heuristics {
                     case 3: pushFrom = new Integer[]{currentPosition[0] + dx[2], currentPosition[1] + dy[2]}; break;
                     default:break;
                 }
-                if ((b[pushFrom[0]][pushFrom[1]] != SquareType.BOX.getIcon() || (pushFrom[0].equals(from[0]) && pushFrom[1].equals(from[1]))) && b[pushFrom[0]][pushFrom[1]] != SquareType.WALL.getIcon()) {
+                if ((b[pushFrom[0]][pushFrom[1]] != SquareType.BOX.getIcon() || (pushFrom[0].equals(from[0]) && pushFrom[1].equals(from[1])) || isGoal(pushFrom)) && b[pushFrom[0]][pushFrom[1]] != SquareType.WALL.getIcon()) {
 
                     /* despues nos fijamos si nos podemos posicionar en la nueva posición */
                     Integer[] nextPosition = {currentPosition[0] + dx[directionIndex], currentPosition[1] + dy[directionIndex]};
@@ -263,7 +263,7 @@ public class Heuristics {
 
                     if (b[nextPosition[0]][nextPosition[1]] == SquareType.TILE.getIcon()
                             || b[nextPosition[0]][nextPosition[1]] == SquareType.BALL.getIcon()
-                            || (b[nextPosition[0]][nextPosition[1]] == SquareType.GOAL.getIcon() && !(nextPosition[0].equals(to[0]) && nextPosition[1].equals(to[1])))) {
+                            || (isGoal(nextPosition) && !(nextPosition[0].equals(to[0]) && nextPosition[1].equals(to[1])))) {
 
                         moved = true;
                         currentPosition = nextPosition;
@@ -286,7 +286,7 @@ public class Heuristics {
                     case 3: pushFrom = new Integer[]{currentPosition[0] + dx[2], currentPosition[1] + dy[2]}; break;
                     default:break;
                 }
-                if ((b[pushFrom[0]][pushFrom[1]] != SquareType.BOX.getIcon() || (pushFrom[0].equals(from[0]) && pushFrom[1].equals(from[1]))) && b[pushFrom[0]][pushFrom[1]] != SquareType.WALL.getIcon()) {
+                if ((b[pushFrom[0]][pushFrom[1]] != SquareType.BOX.getIcon() || (pushFrom[0].equals(from[0]) && pushFrom[1].equals(from[1])) || isGoal(pushFrom)) && b[pushFrom[0]][pushFrom[1]] != SquareType.WALL.getIcon()) {
 
                     /* despues nos fijamos si nos podemos posicionar en la nueva posición */
                     Integer[] nextPosition = {currentPosition[0] + dx[i], currentPosition[1] + dy[i]};
@@ -310,7 +310,7 @@ public class Heuristics {
 
                     if (b[nextPosition[0]][nextPosition[1]] == SquareType.TILE.getIcon()
                             || b[nextPosition[0]][nextPosition[1]] == SquareType.BALL.getIcon()
-                            || (b[nextPosition[0]][nextPosition[1]] == SquareType.GOAL.getIcon() && !(nextPosition[0].equals(to[0]) && nextPosition[1].equals(to[1])))) {
+                            || (isGoal(nextPosition) && !(nextPosition[0].equals(to[0]) && nextPosition[1].equals(to[1])))) {
                         /*if (!paths.get(directionIndex).contains(nextPosition)) possiblePositions.add(nextPosition);*/
                         positions = paths.get(directionIndex);
                         AtomicBoolean repeat = new AtomicBoolean(false);
@@ -354,6 +354,18 @@ public class Heuristics {
         paths.forEach((direction, path) -> minMoves[0] = (Math.min(minMoves[0], path.size() == 0 ? INFINITE_COST : path.size())));
 
         return minMoves[0];
+    }
+
+    private static boolean isGoal (Integer[] coord) {
+
+        if (goalCoordinates == null || goalCoordinates.isEmpty()) return false;
+        AtomicBoolean resp = new AtomicBoolean(false);
+        goalCoordinates.forEach( goal -> {
+            if (goal[0].equals(coord[0]) && goal[1].equals(coord[1])) {
+                resp.set(true);
+            }
+        });
+        return resp.get();
     }
 
 }
