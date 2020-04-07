@@ -70,15 +70,18 @@ public class Solver {
 
     private boolean solveIDAstar() {
         System.out.println("IDAstar");
+        long startTime = System.nanoTime();
         Node startNode = new Node(this.board, null, null,  0);
         int threshold = heuristic(startNode.getBoard());
 
         startNode.setTotalCost(startNode.getPathCost() + threshold);
-        List<Board> explored = new ArrayList<>();
+        List<Node> explored = new ArrayList<>();
 
         while(true) {
             int ret = searchIDAstar(startNode, 0,  threshold, explored);
             if(ret == -1) { //found
+                long endTime = System.nanoTime();
+                this.time = (endTime - startTime)/1000000;
                 return true;
             } else {
                explored.clear();
@@ -88,7 +91,7 @@ public class Solver {
         }
     }
 
-    private int searchIDAstar(Node currentNode, int currentDepth, int threshold, List<Board> explored) {
+    private int searchIDAstar(Node currentNode, int currentDepth, int threshold, List<Node> explored) {
         int f = currentDepth + heuristic(currentNode.getBoard());
         if(f > threshold) {
             return f;
@@ -96,13 +99,20 @@ public class Solver {
 
         if(currentNode.isGoal()){
             moves.add(currentNode);
+            System.out.println("TOTAL COST: "+ currentNode.getTotalCost());
+            System.out.println("PATH COST: "+ currentNode.getPathCost());
+            moves.add(currentNode);
+            this.cost = currentNode.getTotalCost();
+            //this.frontierQ = frontier.size();
+            this.exploredQ = explored.size();
+
             return -1;
         }
 
         int min = Integer.MAX_VALUE;
         currentNode.generateWeightedOutcomes();
-        List<Node> n = currentNode.getOutcomes();
-        explored.add(currentNode.getBoard());
+       // List<Node> n = currentNode.getOutcomes();
+        explored.add(currentNode);
         int ret;
 
         for(Node childNode : currentNode.getOutcomes()) {
@@ -120,8 +130,8 @@ public class Solver {
     }
 
 
-
-
+//
+//
 //    private boolean solveIDAstar() {
 //        System.out.println("IDAstar");
 //        Node startNode = new Node(this.board, null, null,  0);
@@ -242,17 +252,17 @@ public class Solver {
             for(Node childNode : currentNode.getOutcomes()){
                 h = heuristic(childNode.getBoard());
 
-                if(h >= 1000000000) {
-                    System.out.println("hola");
-                    System.out.println(childNode.getBoard().toString());
-                }
+//                if(h >= 1000000000) {
+//                    System.out.println("hola");
+//                    System.out.println(childNode.getBoard().toString());
+//                }
 
-                //if(h < 1000000000) {
+               // if(h < 1000000000) {
                     childNode.setTotalCost(childNode.getPathCost() + h);
                     if(!explored.contains(childNode) && !frontier.contains(childNode)){
                         frontier.add(childNode);
                     } else if(frontier.contains(childNode)){
-                        for(Node n : frontier) { //NO SE COMO HACER UN GET
+                        for(Node n : frontier) {
                             if(childNode.equals(n)) {
                                 if(childNode.getTotalCost() < n.getTotalCost()){
                                     frontier.remove(n);
@@ -262,7 +272,7 @@ public class Solver {
                             }
                         }
                     } else if(explored.contains(childNode)) {
-                        for(Node n : explored) { //NO SE COMO HACER UN GET
+                        for(Node n : explored) {
                             if(childNode.equals(n)) {
                                 if(childNode.getTotalCost() < n.getTotalCost()){
                                     frontier.add(childNode);
@@ -270,9 +280,9 @@ public class Solver {
                             }
                         }
                     }
-                //}
+                }
            }
-        }
+        //}
         return false;
     }
 
@@ -316,27 +326,42 @@ public class Solver {
             }
             explored.add(currentNode);
             currentNode.generateWeightedOutcomes();
-            List<Node> outcomes = currentNode.getOutcomes();
+            //List<Node> outcomes = currentNode.getOutcomes();
             for(Node childNode : currentNode.getOutcomes()){
+                System.out.println(childNode.getBoard().toString());
                 h = heuristic(childNode.getBoard());
+
+//                if(h >= 1000000000) {
+//                    System.out.println("hola");
+//                    System.out.println(childNode.getBoard().toString());
+//                }
+
                 //if(h < 1000000000) {
                 childNode.setTotalCost(h);
                 if(!explored.contains(childNode) && !frontier.contains(childNode)){
                     frontier.add(childNode);
                 } else if(frontier.contains(childNode)){
-                    for(Node n : frontier) { //NO SE COMO HACER UN GET
+                    for(Node n : frontier) {
                         if(childNode.equals(n)) {
-                            if(n.getTotalCost() > childNode.getTotalCost()) { //todo si tienen = costo
+                            if(childNode.getTotalCost() < n.getTotalCost() ){
                                 frontier.remove(n);
                                 frontier.add(childNode);
                                 break;
                             }
                         }
                     }
+                } else if(explored.contains(childNode)) {
+                    for(Node n : explored) {
+                        if(childNode.equals(n)) {
+                            if(childNode.getTotalCost() < n.getTotalCost()){
+                                frontier.add(childNode);
+                            }
+                        }
+                    }
                 }
             }
-            //}
         }
+        //}
         return false;
     }
 
