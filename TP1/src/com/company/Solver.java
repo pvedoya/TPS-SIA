@@ -254,7 +254,7 @@ public class Solver {
                     } else if(frontier.contains(childNode)){
                         for(Node n : frontier) { //NO SE COMO HACER UN GET
                             if(childNode.equals(n)) {
-                                if(n.getTotalCost() > childNode.getTotalCost()) { //todo si tienen = costo
+                                if(childNode.getTotalCost() < n.getTotalCost()){
                                     frontier.remove(n);
                                     frontier.add(childNode);
                                     break;
@@ -264,9 +264,8 @@ public class Solver {
                     } else if(explored.contains(childNode)) {
                         for(Node n : explored) { //NO SE COMO HACER UN GET
                             if(childNode.equals(n)) {
-                                if(n.getTotalCost() > childNode.getTotalCost()) { //todo si tienen = costo
+                                if(childNode.getTotalCost() < n.getTotalCost()){
                                     frontier.add(childNode);
-                                    break;
                                 }
                             }
                         }
