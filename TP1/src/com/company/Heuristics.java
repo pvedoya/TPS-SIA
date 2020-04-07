@@ -1,5 +1,7 @@
 package com.company;
 
+import com.sun.tools.javac.util.Pair;
+
 import java.io.File;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -165,19 +167,27 @@ public class Heuristics {
             for (int j = 0; j < goalCoordinates.size(); j++) {
 
                 int range = (int) Math.pow(boxCoordinates.size(), goalCoordinates.size() - (i+1));
-                int space;
-                if (i == 0) space = 0;
+                int space, limit;
+                if (i == 0) {
+                    space = 0;
+                    limit = 0;
+                }
                 else {
                     space = (int) Math.pow(boxCoordinates.size(), goalCoordinates.size() - i);
+                    limit = (int) Math.pow(boxCoordinates.size(), i);
                 }
                 int rep = 0;
 
                 do {
                     for (int k = j * range + rep * space; k < (j+1) * range + rep * space ; k++) {
-                        combinations[k] += hungarianMatrix[i][j];
+                        if (i > 0 && rep == j) {
+                            combinations[k] += INFINITE_COST;
+                        } else {
+                            combinations[k] += hungarianMatrix[i][j];
+                        }
                     }
                     rep++;
-                } while (rep < i*boxCoordinates.size());
+                } while (rep < limit);
 
             }
         }
@@ -192,6 +202,8 @@ public class Heuristics {
     }
 
     private static int countMoves(Board board, Integer[] from, Integer[] to) {
+
+        if (from[0].equals(to[0]) && from[1].equals(to[1])) return 0;
 
         char[][] b = board.getBoard();
         int[] dx = {-1, 1, 0, 0};
