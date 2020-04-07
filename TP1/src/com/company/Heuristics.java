@@ -246,7 +246,7 @@ public class Heuristics {
                     /* despues nos fijamos si nos podemos posicionar en la nueva posición */
                     Integer[] nextPosition = {currentPosition[0] + dx[directionIndex], currentPosition[1] + dy[directionIndex]};
 
-                    if (b[nextPosition[0]][nextPosition[1]] == SquareType.GOAL.getIcon() && nextPosition[0].equals(to[0]) && nextPosition[1].equals(to[1])) {
+                    if (nextPosition[0].equals(to[0]) && nextPosition[1].equals(to[1])) {
 
                         /* conseguimos un recorrido hacia el goal*/
                         moved = true;
@@ -291,7 +291,7 @@ public class Heuristics {
                     /* despues nos fijamos si nos podemos posicionar en la nueva posición */
                     Integer[] nextPosition = {currentPosition[0] + dx[i], currentPosition[1] + dy[i]};
 
-                    if (b[nextPosition[0]][nextPosition[1]] == SquareType.GOAL.getIcon() && nextPosition[0].equals(to[0]) && nextPosition[1].equals(to[1])) {
+                    if (nextPosition[0].equals(to[0]) && nextPosition[1].equals(to[1])) {
 
                         /* conseguimos un recorrido hacia el goal*/
                         moved = true;
